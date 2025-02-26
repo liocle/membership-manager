@@ -1,0 +1,32 @@
+volumes:
+  postgres_data:
+    driver: local
+    name: MemberMGR_Volume
+
+networks:
+  default:
+    name: ${APP_NETWORK}
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${APP_NAME}_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ${APP_NAME}_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "${PGADMIN_PORT}:80"
