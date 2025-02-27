@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:${POSTGRES_VERSION}
+        image: postgres:${{ secrets.POSTGRES_VERSION }}
         env:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: changeme
