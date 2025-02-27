@@ -1,0 +1,34 @@
+name: Database Schema Validation
+
+on: [push, pull_request]
+
+jobs:
+  test-db:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:${POSTGRES_VERSION}
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: members_db
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U admin" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Install PostgreSQL Client # Required to run psql commands
+        run: sudo apt install -y postgresql-client
+
+      - name: Apply Database Schema # Run the schema file to create tables
+        run: |
+          PGPASSWORD=changeme psql -h localhost -U admin -d members_db -f postgres/init/init.sql
+
+      - name: Validate Tables Exist
+        run: |
+          PGPASSWORD=changeme psql -h localhost -U admin -d members_db -c "\dt"
