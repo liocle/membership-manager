@@ -52,5 +52,5 @@ This starts **PostgreSQL** and **pgAdmin** (accessible at `http://localhost:5050
 Feel free to open issues, suggest features, or contribute via pull requests!
 
 ### **License**
-MIT License - Free to use and modify. 🚀
+MIT License - Free to use and modify.
 
