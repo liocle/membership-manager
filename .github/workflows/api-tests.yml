@@ -1,0 +1,66 @@
+name: API Tests
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+      - tests/**
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:${{ vars.POSTGRES_VERSION }}
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: changeme
+          POSTGRES_DB: members_db
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U admin" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+
+      - name: Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install pytest pytest-cov  # Install testing dependencies
+
+      - name: Run Unit Tests
+        run: |
+          source venv/bin/activate
+          pytest tests/ --cov=api --cov-report=xml
+
+      - name: Archive Test Result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: api/coverage.xml
+#      - name: Upload Coverage Report
+#        uses: codecov/codecov-action@v4
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }} # Optional, if using Codecov
+#          file: coverage.xml
