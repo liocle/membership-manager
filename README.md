@@ -42,7 +42,7 @@ This starts **PostgreSQL** and **pgAdmin** (accessible at `http://localhost:5050
 ## 📌 Features Roadmap
 ✅ PostgreSQL database with `members`, `invoices`, `payments` tables.  
 🔄 Email parsing for member intake (Gmail plaintext processing).  
-📥 CSV processing for payment matching (Viitenumero validation).  
+📥 CSV processing for payment matching (`Reference Number` validation).  
 📧 Automated PDF invoice generation & email delivery.  
 📊 Web UI for easier data management.  
 
