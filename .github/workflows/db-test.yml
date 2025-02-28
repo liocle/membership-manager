@@ -1,7 +1,14 @@
 name: Database Schema Validation
 
-on: [push, pull_request]
-
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
 jobs:
   test-db:
     runs-on: ubuntu-latest
