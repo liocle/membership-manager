@@ -172,4 +172,5 @@ cython_debug/
 .pypirc
 
 # Project specific
+# docker image ids kept track by Makefile
 .image_ids

@@ -2,6 +2,11 @@
 -- PostgreSQL database dump
 --
 
+--
+-- Deprecated now that we use SQLalchemy
+-- Could be deleted but kept for reference
+--
+
 -- Dumped from database version 16.8 (Debian 16.8-1.pgdg120+1)
 -- Dumped by pg_dump version 16.6
 
@@ -246,4 +251,3 @@ ALTER TABLE ONLY public.payments
 --
 -- PostgreSQL database dump complete
 --
-

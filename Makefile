@@ -77,6 +77,11 @@ re: clean_orphans up_no_elk
 # Rebuild and start all services: clean orphans and volumes, keep images
 re_rm_volumes: clean_orphans clean_volumes up_no_elk
 
+# Rebuild and start all services: clean orphans and volumes, keep images
+re_rm_volumes_cache: clean_orphans clean_volumes
+	docker compose -f ./docker-compose.yml build --no-cache
+	$(MAKE) up_no_elk
+
 # Rebuild with no-cache and start all services without removing volumes
 re_no_cache: clean_orphans
 	docker compose -f ./docker-compose.yml build --no-cache
@@ -129,10 +134,10 @@ ps_inspect: ps_short
 ################################################################################
 # Open a shell in a specific container
 exec_postgres:
-	docker compose -f ./docker-compose.yml exec postgres sh
+	docker compose -f ./docker-compose.yml exec postgres bash
 
 exec_api:
-	docker compose -f ./docker-compose.yml exec api sh
+	docker compose -f ./docker-compose.yml exec api bash
 
 ################################################################################
 # Stop services
@@ -161,9 +166,35 @@ nuke:
 # Tests
 ################################################################################
 
-# Run jest
+# Run pytest
 run_pytest:
 	pytest tests/
+
+################################################################################
+# Tools and Utilities
+################################################################################
+
+create_db:
+	docker compose -f ./docker-compose.yml exec api python create_tables.py
+
+alembic_generate_migration:
+	@read -p "Enter migration message: " keyword; docker compose exec api alembic revision --autogenerate -m "$$keyword"
+
+
+alembic_upgrade_head:
+	docker compose exec api alembic upgrade head
+
+alembic_history:
+	docker compose exec api alembic history
+
+alembic_downgrade:
+	docker compose exec api alembic downgrade -1
+
+################################################################################
+# PSQL
+################################################################################
+psql_members:
+	docker exec -it membermgr_postgres_db psql -U admin -d members_db -c "\d members"
 
 ################################################################################
 # Help
@@ -191,6 +222,7 @@ help:
 	@echo "  re             Restart services after cleaning orphans, keeping data"
 	@echo "  re_no_cache    Force full rebuild from scratch (no cache, fresh layers)"
 	@echo "  re_rm_volumes  Restart services after removing ALL volumes (fresh DB)"
+	@echo "  re_rm_volumes_cache   Restart services after removing ALL volumes and cache"
 	@echo ""
 	@echo "Logging:"
 	@echo "  logs_postgres  Tail logs from the postgres service"
@@ -219,6 +251,15 @@ help:
 	@echo "Tests:"
 	@echo "  run_pytest     Run pytest"
 	@echo ""
+	@echo "Tools and utilities:"
+	@echo "  create_db      runs the create_tables.py script to create the database tables"
+	@echo "  alembic_generate_migration      Generate a new migration with alembic"
+	@echo "  alembic_upgrade_head            Upgrade to the latest migration"
+	@echo "  alembic_history                 Show the migration history"
+	@echo "  alembic_downgrade               Downgrade the database by one migration"
+	@echo ""
+	@echo "PSQL:"
+	@echo "  psql_members   Connect to the members database in the postgres container"
+	@echo ""
 	@echo "Help:"
 	@echo "  help           Show this help message"
-
