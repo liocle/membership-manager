@@ -8,12 +8,12 @@ from sqlalchemy.orm import Session
 load_dotenv()
 
 # Debugging print
-print("Environment variables check:")
-for var in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "DATABASE_URL"]:
-    print(f"\t{var}: {os.getenv(var)}")
-
-print(" Environment variables check complete!")
-print("________________________________________________________________________________")
+# print("Environment variables check:")
+# for var in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "DATABASE_URL"]:
+#     print(f"\t{var}: {os.getenv(var)}")
+#
+# print(" Environment variables check complete!")
+# print("________________________________________________________________________________")
 
 print("🔄 Dropping and recreating database tables in:", engine.url)
 

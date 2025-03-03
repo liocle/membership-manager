@@ -1,6 +1,6 @@
 # app/models.py
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Computed
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -17,6 +17,10 @@ class Member(Base):
 	reference_number = Column(String, unique=True, nullable=False)
 	no_postal_mail = Column(Boolean, default=False)
 	notes = Column(String, nullable=True)
+
+	# computed column generated from first_name and last_name
+	full_name = Column(String, Computed("first_name || ' ' || last_name", persisted=True), nullable=False, index=True)
+
 	memberships = relationship("Membership", back_populates="member")
 
 class Membership(Base):
