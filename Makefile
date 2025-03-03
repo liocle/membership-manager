@@ -169,9 +169,12 @@ nuke:
 create_db:
 	docker compose -f ./docker-compose.yml exec api python create_tables.py
 
+# Seed the database with sample data
+seed_db:
+	docker compose exec api python seed_data.py
+
 alembic_generate_migration:
 	@read -p "Enter migration message: " keyword; docker compose exec api alembic revision --autogenerate -m "$$keyword"
-
 
 alembic_upgrade_head:
 	docker compose exec api alembic upgrade head
@@ -242,6 +245,7 @@ help:
 	@echo ""
 	@echo "Tools and utilities:"
 	@echo "  create_db      runs the create_tables.py script to create the database tables"
+	@echo "  seed_db        Seed the database with sample data"
 	@echo "  alembic_generate_migration      Generate a new migration with alembic"
 	@echo "  alembic_upgrade_head            Upgrade to the latest migration"
 	@echo "  alembic_history                 Show the migration history"

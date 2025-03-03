@@ -35,7 +35,7 @@ def get_db():
         db.close()
 
 
-@app.get("/members/{reference_number}")
+@app.get("/members/search/{reference_number}")
 def get_member_by_reference(reference_number: str, db: Session = Depends(get_db)):  # FastAPI calls get_db() to get a database session
     # SQLAlchemy fetches the member by reference number
     member = db.query(Member).filter(Member.reference_number == reference_number).first()
@@ -62,3 +62,38 @@ def get_member_by_reference(reference_number: str, db: Session = Depends(get_db)
             for m in memberships
         ]
     }
+
+
+# Search by full name (supports partial search)
+@app.get("/members/search/full_name/{name}")
+def search_by_full_name(name: str, db: Session = Depends(get_db)):
+    members = db.query(Member).filter(Member.full_name.ilike(f"%{name}%")).all()
+    return {"results": members}
+
+# Search by first name OR last name
+@app.get("/members/search/name/{name}")
+def search_by_name(name: str, db: Session = Depends(get_db)):
+    members = db.query(Member).filter(
+        (Member.first_name.ilike(f"%{name}%")) | (Member.last_name.ilike(f"%{name}%"))
+    ).all()
+    return {"results": members}
+
+# Search by city
+@app.get("/members/search/city/{city}")
+def search_by_city(city: str, db: Session = Depends(get_db)):
+    members = db.query(Member).filter(Member.city.ilike(f"%{city}%")).all()
+    return {"results": members}
+
+# Search by postal code
+@app.get("/members/search/postal/{postal_code}")
+def search_by_postal(postal_code: str, db: Session = Depends(get_db)):
+    members = db.query(Member).filter(Member.postal_code == postal_code).all()
+    return {"results": members}
+
+# Search by reference number (exact match)
+@app.get("/members/search/reference/{reference_number}")
+def search_by_reference(reference_number: str, db: Session = Depends(get_db)):
+    member = db.query(Member).filter(Member.reference_number == reference_number).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+    return member
