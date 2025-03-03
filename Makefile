@@ -163,12 +163,30 @@ nuke:
 	git reset --hard
 
 ################################################################################
-# Tools
+# Tools and Utilities
 ################################################################################
 
 create_db:
 	docker compose -f ./docker-compose.yml exec api python create_tables.py
 
+alembic_generate_migration:
+	@read -p "Enter migration message: " keyword; docker compose exec api alembic revision --autogenerate -m "$$keyword"
+
+
+alembic_upgrade_head:
+	docker compose exec api alembic upgrade head
+
+alembic_history:
+	docker compose exec api alembic history
+
+alembic_downgrade:
+	docker compose exec api alembic downgrade -1
+
+################################################################################
+# PSQL
+################################################################################
+psql_members:
+	docker exec -it membermgr_postgres_db psql -U admin -d members_db -c "\d members"
 
 ################################################################################
 # Help
@@ -197,7 +215,6 @@ help:
 	@echo "  re_no_cache    Force full rebuild from scratch (no cache, fresh layers)"
 	@echo "  re_rm_volumes  Restart services after removing ALL volumes (fresh DB)"
 	@echo "  re_rm_volumes_cache   Restart services after removing ALL volumes and cache"
-
 	@echo ""
 	@echo "Logging:"
 	@echo "  logs_postgres  Tail logs from the postgres service"
@@ -223,8 +240,15 @@ help:
 	@echo "Reset repository:"
 	@echo "  nuke           Reset repository to the last commit (destructive action, removes all untracked files)"
 	@echo ""
-	@echo "Tools:"
+	@echo "Tools and utilities:"
 	@echo "  create_db      runs the create_tables.py script to create the database tables"
+	@echo "  alembic_generate_migration      Generate a new migration with alembic"
+	@echo "  alembic_upgrade_head            Upgrade to the latest migration"
+	@echo "  alembic_history                 Show the migration history"
+	@echo "  alembic_downgrade               Downgrade the database by one migration"
+	@echo ""
+	@echo "PSQL:"
+	@echo "  psql_members   Connect to the members database in the postgres container"
 	@echo ""
 	@echo "Help:"
 	@echo "  help           Show this help message"

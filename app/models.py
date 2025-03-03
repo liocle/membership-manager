@@ -15,7 +15,8 @@ class Member(Base):
 	city = Column(String, index=True)
 	postal_code = Column(String, index=True)
 	reference_number = Column(String, unique=True, nullable=False)
-
+	no_postal_mail = Column(Boolean, default=False)
+	notes = Column(String, nullable=True)
 	memberships = relationship("Membership", back_populates="member")
 
 class Membership(Base):
@@ -26,5 +27,6 @@ class Membership(Base):
 	year = Column(Integer, index=True)
 	amount = Column(Integer, nullable=False)
 	is_paid = Column(Boolean, default=False)
+	discounted = Column(Boolean, default=False)
 
 	member = relationship("Member", back_populates="memberships")

@@ -9,7 +9,7 @@ load_dotenv()
 
 # Debugging print
 print("Environment variables check:")
-for var in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB"]:
+for var in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "DATABASE_URL"]:
     print(f"\t{var}: {os.getenv(var)}")
 
 print(" Environment variables check complete!")

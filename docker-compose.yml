@@ -18,7 +18,6 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # - ./postgres/init:/docker-entrypoint-initdb.d/ # Uncomment to use init scripts. Obsolete now that SQLalchemy is used.
     healthcheck:
       test:
         ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
