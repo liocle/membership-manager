@@ -163,6 +163,14 @@ nuke:
 	git reset --hard
 
 ################################################################################
+# Tests
+################################################################################
+
+# Run pytest
+run_pytest:
+	pytest tests/
+
+################################################################################
 # Tools and Utilities
 ################################################################################
 
@@ -242,6 +250,9 @@ help:
 	@echo ""
 	@echo "Reset repository:"
 	@echo "  nuke           Reset repository to the last commit (destructive action, removes all untracked files)"
+	@echo ""
+	@echo "Tests:"
+	@echo "  run_pytest     Run pytest"
 	@echo ""
 	@echo "Tools and utilities:"
 	@echo "  create_db      runs the create_tables.py script to create the database tables"

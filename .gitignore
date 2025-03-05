@@ -135,6 +135,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.envrc
 
 # Spyder project settings
 .spyderproject
@@ -170,5 +171,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# docker image
+# Project specific
+# docker image ids kept track by Makefile
 .image_ids
