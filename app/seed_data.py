@@ -40,17 +40,6 @@ test_members = [
         no_postal_mail=False,
         notes="Long-time supporter"
     ),
-    Member(
-            first_name="Georgette",
-            last_name="Johnson",
-            email="georgette@example.com",
-            phone="123456789",
-            city="Helsinki",
-            postal_code="00100",
-            reference_number="REF004",
-            no_postal_mail=False,
-            notes="VIP Member"
-        ),
 ]
 
 # Add members to database

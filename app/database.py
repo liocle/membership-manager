@@ -16,7 +16,11 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 
 # Detect if we are running inside Docker
-DB_HOST = os.getenv("POSTGRES_HOST", "postgres") if os.getenv("RUNNING_IN_DOCKER") else "localhost"
+DB_HOST = (
+    os.getenv("POSTGRES_HOST", "postgres")
+    if os.getenv("RUNNING_IN_DOCKER")
+    else "localhost"
+)
 
 # Construct DATABASE_URL using the assigned variables
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
@@ -30,6 +34,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create a Base class for our models to inherit from
 Base = declarative_base()
+
 
 # Dependency to get the database session - This function will return a new session to the database
 # After the request is finished, the session will be closed
