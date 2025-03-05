@@ -1,23 +1,23 @@
 name: API Tests
-
 on:
+
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - feature/**
-      - tests/**
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "db-tests.yml"
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "db-tests.yml"
+    #  push:
+    #    branches:
+    #      - main
+    #      - feature/**
+    #      - tests/**
+    #    paths-ignore:
+    #      - "README.md"
+    #      - "docs/**"
+    #      - "db-tests.yml"
+    #  pull_request:
+    #    branches:
+    #      - main
+    #    paths-ignore:
+    #      - "README.md"
+    #      - "docs/**"
+    #      - "db-tests.yml"
 
 jobs:
   test:
