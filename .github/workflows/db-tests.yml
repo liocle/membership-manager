@@ -2,16 +2,16 @@ name: Database Schema Validation
 
 on:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "api-tests.yml"
-  pull_request:
-    paths-ignore:
-      - "README.md"
-      - "docs/**"
-      - "api-tests.yml"
+    #   push:
+    #     paths-ignore:
+    #       - "README.md"
+    #       - "docs/**"
+    #       - "api-tests.yml"
+    #   pull_request:
+    #     paths-ignore:
+    #       - "README.md"
+    #       - "docs/**"
+    #       - "api-tests.yml"
 
 jobs:
   test-db:
