@@ -193,6 +193,12 @@ alembic_history:
 alembic_downgrade:
 	docker compose exec api alembic downgrade -1
 
+alembic_copy_version:
+	docker container cp membermgr_api:/app/alembic/versions/. ./app/alembic/versions/
+
+alembic_upload_version:
+	docker container cp ./app/alembic/versions/. membermgr_api:/app/alembic/versions/
+
 ################################################################################
 # PSQL
 ################################################################################
@@ -261,6 +267,8 @@ help:
 	@echo "  alembic_upgrade_head            Upgrade to the latest migration"
 	@echo "  alembic_history                 Show the migration history"
 	@echo "  alembic_downgrade               Downgrade the database by one migration"
+	@echo "  alembic_copy_version            Copy the alembic versions from the container to the local directory"
+	@echo "  alembic_upload_version          Copy the alembic versions from the local directory to the container"
 	@echo ""
 	@echo "PSQL:"
 	@echo "  psql_members   Connect to the members database in the postgres container"

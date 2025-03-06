@@ -21,6 +21,15 @@ class Member(Base):
     created_at = Column(Date, nullable=False)
     modified_at = Column(Date, nullable=False)
 
+    # Preserve existing reference numbers, generate new ones from 2000000000+
+    reference_number = Column(
+        String,
+        unique=True,
+        nullable=False,
+        default=Sequence(
+            "reference_number_seq", start=2000000000, increment=1, optional=True
+        ),
+    )
     # computed column generated from first_name and last_name
     full_name = Column(
         String,
