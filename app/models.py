@@ -1,8 +1,11 @@
 # app/models.py
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Computed
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Computed, func, Sequence
 from sqlalchemy.orm import relationship
 from database import Base
+
+# Define the sequence
+# reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
 
 
 class Member(Base):
@@ -15,22 +18,20 @@ class Member(Base):
     phone = Column(String, nullable=True)
     city = Column(String, index=True)
     postal_code = Column(String, index=True)
-    reference_number = Column(String, unique=True, nullable=False)
     no_postal_mail = Column(Boolean, default=False)
     notes = Column(String, nullable=True)
-    created_at = Column(Date, nullable=False)
-    modified_at = Column(Date, nullable=False)
+    created_at = Column(Date, nullable=False, server_default=func.now())
+    modified_at = Column(Date, nullable=False, server_default=func.now(), onupdate=func.now())
 
-    # Preserve existing reference numbers, generate new ones from 2000000000+
+    # Use the defined sequence in the reference_number column
     reference_number = Column(
-        String,
+        Integer,
         unique=True,
         nullable=False,
-        default=Sequence(
-            "reference_number_seq", start=2000000000, increment=1, optional=True
-        ),
+        server_default=Sequence("reference_number_seq", start=2000000000, increment=1).next_value(),
     )
-    # computed column generated from first_name and last_name
+
+    # Computed column generated from first_name and last_name
     full_name = Column(
         String,
         Computed("first_name || ' ' || last_name", persisted=True),
