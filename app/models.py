@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 # Define the sequence
-# reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
+reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
 
 
 class Member(Base):

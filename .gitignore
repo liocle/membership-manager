@@ -174,3 +174,9 @@ cython_debug/
 # Project specific
 # docker image ids kept track by Makefile
 .image_ids
+
+
+# Ignore temporary sql database files
+Temp*.sql
+
+

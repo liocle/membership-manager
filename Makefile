@@ -1,5 +1,7 @@
 .PHONY: get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes
 
+include .env
+
 ################################################################################
 # Build and Start
 ################################################################################
@@ -203,7 +205,17 @@ alembic_upload_version:
 # PSQL
 ################################################################################
 psql_members:
-	docker exec -it membermgr_postgres_db psql -U admin -d members_db -c "\d members"
+	@echo "Show structure of 'members' table (inside Docker)"
+	docker exec -it membermgr_postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "\d+ members"
+
+psql_docker:
+	@echo "Connecting to PostgreSQL inside Docker container..."
+	docker exec -it membermgr_postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
+
+psql_local:
+	@echo "Connecting to local PostgreSQL service..."
+	@PGPASSWORD=$(POSTGRES_PASSWORD) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -h $(POSTGRES_HOST_LOCAL) -p $(POSTGRES_PORT)
+
 
 ################################################################################
 # Help
@@ -271,7 +283,9 @@ help:
 	@echo "  alembic_upload_version          Copy the alembic versions from the local directory to the container"
 	@echo ""
 	@echo "PSQL:"
-	@echo "  psql_members   Connect to the members database in the postgres container"
+	@echo "  psql_members    Show structure of 'members' table from inside Docker"
+	@echo "  psql_docker     Connect to PostgreSQL inside Docker container"
+	@echo "  psql_local      Connect to local PostgreSQL service (requires system PostgreSQL running)"
 	@echo ""
 	@echo "Help:"
 	@echo "  help           Show this help message"
