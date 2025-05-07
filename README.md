@@ -1,42 +1,73 @@
-# **Membership Manager**  
 
-## **📌 Project Overview**  
-Membership Manager is a database-driven web application designed to streamline the management of a user base, including member records, subscriptions, and payment tracking. The goal of this project is to replace an outdated system with a modern, scalable, and automated solution that enhances efficiency in handling member data and communication.  
+# **Membership Manager**
 
-This project is a personal initiative to build a **robust, maintainable, and well-integrated system** for managing memberships while ensuring ease of access and data integrity.  
+## **📌 Project Overview**
+Membership Manager is a database-driven web application designed to streamline the management of a user base, including member records, subscriptions, and payment tracking. The goal is to replace an outdated system with a modern, maintainable solution that improves accuracy and efficiency.
 
-## **🛠️ Tech Stack**  
+This project is a personal initiative to deepen my backend development and DevOps skills by building a full-stack application from scratch with real-world features and infrastructure.
 
-### **Backend**  
-- **Python** (Core backend logic)  
-- **FastAPI** (High-performance web framework for API development)  
-- **SQLAlchemy** (ORM for database management)  
-- **Alembic** (Database migrations and schema versioning)  
-- **PostgreSQL** (Relational database for structured data storage)  
+## **🛠️ Tech Stack**
 
-### **Infrastructure & Deployment**  
-- **Docker & Docker Compose** (Containerized environment for easy deployment)  
-- **GitHub Actions** (CI/CD for automated testing and integration)  
+### **Backend**
+- **Python** (Core backend logic)
+- **FastAPI** (High-performance web framework for API development)
+- **SQLAlchemy** (ORM for database modeling)
+- **Alembic** (Database migrations and schema versioning)
+- **PostgreSQL** (Relational database)
 
-### **Testing & Development Tools**  
-- **Pytest** (Unit and integration testing)  
-- **pgAdmin** (Database administration)  
+### **Infrastructure & Deployment**
+- **Docker & Docker Compose** (Containerized local development and deployment)
+- **GitHub Actions** (CI pipeline for testing and integration)
 
-## **📌 Features Implemented**  
-✅ **Database Design & Migrations**: Members, memberships, payment tracking  
-✅ **Computed Fields**: Auto-generated `full_name` field for easy searchability  
-✅ **Dockerized Environment**: Fully containerized setup for easy deployment  
-✅ **Automated Testing**: CI pipeline with GitHub Actions & Pytest  
-✅ **Database Seeding**: Script to populate test data for development  
+### **Testing & Development Tools**
+- **Pytest** (Unit and integration tests)
+- **pgAdmin** (Database visualization and admin)
+
+## **✅ Current Features**
+- **Structured Database Schema**: Members, memberships, payment status tracking
+- **Auto-generated Fields**: Computed `full_name` field for convenience and search
+- **Dockerized Environment**: One-command setup with Docker Compose
+- **CI Pipeline Setup**: GitHub Actions configured and validated with placeholder tests; ready for integration with real test coverage.
+- **Database Seeding**: Sample data scripts for dev and test environments
+
+## **🚧 MVP Goals (In Progress)**
+- **CSV Import for Payment Updates**: Manual import script to update payment statuses
+- **Basic Admin UI**: Lightweight frontend using a simple form-based dashboard
+
+## ▶️ Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/liocle/membership-manager.git
+cd membership-manager
+
+# Run development environment
+make dev
+
+# API documentation available at:
+http://localhost:8000/docs
+```
 
 
-### **🚀 Upcoming Features & Technologies**  
-🔹 **Payment Data Import & Processing**: Script to update payment status from manually downloaded CSV files  
-🔹 **Admin Dashboard** (React + TypeScript for user-friendly management)  
-🔹 **Cloud Deployment** *(Hosting on AWS)*  
-🔹 **User Authentication & Authorization** *(Tech to be considered in the future, depending on needs)*  
-🔹 **Expanded Testing Coverage**:
-  - **API Performance & Load Testing** *(e.g., Locust/k6 – to ensure the system handles multiple concurrent users efficiently)*  
-  - **Security Testing** *(Basic authentication & database protection checks, tools like OWASP ZAP/Snyk)*  
-  - **Automated Regression Testing** *(Set up in GitHub Actions to catch breaking changes before merging code)*  
+## 🛠 Developer Setup
+
+This project uses:
+
+- `pyenv` for Python version management (`.python-version`)
+- `venv` for isolated dependencies (`.venv/`)
+- `direnv` for automatic environment loading (`.envrc`, `.env`)
+- `pip` + `requirements.txt` for dependency tracking
+
+### One-time setup:
+```bash
+pyenv install 3.11.9
+pyenv local 3.11.9
+python -m venv .venv
+direnv allow
+pip install -r requirements.txt
+```
+
+## 👤 Author
+Created and maintained by **Lionel Clerc**. This project serves as a foundation for learning and building backend services using modern Python tools and DevOps practices.
+
 
