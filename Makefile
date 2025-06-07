@@ -206,7 +206,7 @@ alembic_upload_version:
 ################################################################################
 psql_members:
 	@echo "Show structure of 'members' table (inside Docker)"
-	docker exec -it membermgr_postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "\d+ members"
+	docker exec -it membermgr_postgres_db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "\d members"
 
 psql_docker:
 	@echo "Connecting to PostgreSQL inside Docker container..."

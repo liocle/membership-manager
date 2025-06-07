@@ -1,0 +1,17 @@
+# ./pyproject.toml
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = ["alembic", "migrations"]
+extend-select = ["I"]  # Import cleanup
+fix = true
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
