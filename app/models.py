@@ -1,17 +1,38 @@
 # app/models.py
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Computed, func, Sequence
-from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    Computed,
+    Date,
+    DDL,
+    event,
+    ForeignKey,
+    Integer,
+    Sequence,
+    String,
+    func,
+)
+from sqlalchemy.orm import relationship
 
-# Define the sequence
+# Define the sequence for reference_number, starting at 2_000_000_000
 reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
+# Explicitly create sequence before tables
+event.listen(
+    Base.metadata,
+    "before_create",
+    DDL(
+        f"CREATE SEQUENCE IF NOT EXISTS reference_number_seq START WITH 2000000000 INCREMENT BY 1 OWNED BY NONE;"
+    ),
+)
 
 
 class Member(Base):
     __tablename__ = "members"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(BigInteger, primary_key=True, index=True)
     first_name = Column(String, index=True)
     last_name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=True)
@@ -21,14 +42,16 @@ class Member(Base):
     no_postal_mail = Column(Boolean, default=False)
     notes = Column(String, nullable=True)
     created_at = Column(Date, nullable=False, server_default=func.now())
-    modified_at = Column(Date, nullable=False, server_default=func.now(), onupdate=func.now())
+    modified_at = Column(
+        Date, nullable=False, server_default=func.now(), onupdate=func.now()
+    )
 
     # Use the defined sequence in the reference_number column
     reference_number = Column(
-        Integer,
+        BigInteger,
         unique=True,
         nullable=False,
-        server_default=Sequence("reference_number_seq", start=2000000000, increment=1).next_value(),
+        server_default=reference_number_seq.next_value(),
     )
 
     # Computed column generated from first_name and last_name
@@ -45,8 +68,8 @@ class Member(Base):
 class Membership(Base):
     __tablename__ = "memberships"
 
-    id = Column(Integer, primary_key=True, index=True)
-    member_id = Column(Integer, ForeignKey("members.id"))
+    id = Column(BigInteger, primary_key=True, index=True)
+    member_id = Column(BigInteger, ForeignKey("members.id"))
     year = Column(Integer, index=True)
     amount = Column(Integer, nullable=False)
     is_paid = Column(Boolean, default=False)

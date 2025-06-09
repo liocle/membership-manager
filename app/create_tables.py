@@ -1,19 +1,32 @@
 import os
-from dotenv import load_dotenv
-from database import Base, engine
-from sqlalchemy.orm import Session
 
+from database import Base, engine
+from dotenv import load_dotenv
+from models import Member, Membership
+from sqlalchemy.orm import Session
 
 # Load environment variables
 load_dotenv()
+print(f"📡 DATABASE_URL = '{os.getenv('DATABASE_URL')}'")
 
-# Debugging print
-# print("Environment variables check:")
-# for var in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "DATABASE_URL"]:
-#     print(f"\t{var}: {os.getenv(var)}")
-#
-# print(" Environment variables check complete!")
-# print("________________________________________________________________________________")
+# {{{ Debugging environment variable check ######
+print("Environment variables check:")
+for var in [
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_HOST",
+    "POSTGRES_PORT",
+    "POSTGRES_DB",
+    "DATABASE_URL",
+]:
+    print(f"\t{var}: {os.getenv(var)}")
+
+print(" Environment variables check complete!")
+print(
+    "________________________________________________________________________________"
+)
+# }}} Debugging environment variable check ######
+
 
 print("🔄 Dropping and recreating database tables in:", engine.url)
 
@@ -22,7 +35,7 @@ Base.metadata.drop_all(bind=engine)
 
 print("✅ Dropped existing tables (if any)...")
 
-import models
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 
