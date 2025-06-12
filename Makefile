@@ -181,7 +181,7 @@ create_db:
 
 # Seed the database with sample data
 seed_db:
-	docker compose exec api python seed_data.py
+	docker compose exec api python seed/seed_data.py
 
 alembic_generate_migration:
 	@read -p "Enter migration message: " keyword; docker compose exec api alembic revision --autogenerate -m "$$keyword"
@@ -200,6 +200,8 @@ alembic_copy_version:
 
 alembic_upload_version:
 	docker container cp ./app/alembic/versions/. membermgr_api:/app/alembic/versions/
+
+
 
 ################################################################################
 # PSQL
@@ -289,3 +291,4 @@ help:
 	@echo ""
 	@echo "Help:"
 	@echo "  help           Show this help message"
+
