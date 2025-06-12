@@ -1,7 +1,10 @@
+# tests/test_models.py
+
+from datetime import date
+
 import pytest
 from database import SessionLocal
 from models import Member
-from datetime import date
 
 
 @pytest.fixture

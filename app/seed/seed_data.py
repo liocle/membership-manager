@@ -1,6 +1,13 @@
-from sqlalchemy.orm import Session
+import sys
+from pathlib import Path
+
+# Add parent directory (i.e., /app/) to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+
 from database import SessionLocal
-from models import Member, Membership
+from models import Member
+from sqlalchemy.orm import Session
 
 # Create a new database session
 db: Session = SessionLocal()
@@ -14,9 +21,8 @@ test_members = [
         phone="123456789",
         city="Helsinki",
         postal_code="00100",
-        reference_number="REF001",
         no_postal_mail=False,
-        notes="VIP Member"
+        notes="VIP Member",
     ),
     Member(
         first_name="Bob",
@@ -25,9 +31,8 @@ test_members = [
         phone="987654321",
         city="Espoo",
         postal_code="02100",
-        reference_number="REF002",
         no_postal_mail=True,
-        notes="Prefers email communication"
+        notes="Prefers email communication",
     ),
     Member(
         first_name="Charlie",
@@ -36,17 +41,20 @@ test_members = [
         phone="555555555",
         city="Vantaa",
         postal_code="01300",
-        reference_number="REF003",
         no_postal_mail=False,
-        notes="Long-time supporter"
+        notes="Long-time supporter",
     ),
 ]
 
-# Add members to database
-db.add_all(test_members)
-db.commit()
 
-# Close session
+# Insert only if the email doesn't already exist
+inserted = 0
+for member in test_members:
+    if not db.query(Member).filter_by(email=member.email).first():
+        db.add(member)
+        inserted += 1
+
+db.commit()
 db.close()
 
 print("✅ Test data inserted successfully!")

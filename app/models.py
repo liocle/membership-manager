@@ -2,17 +2,17 @@
 
 from database import Base
 from sqlalchemy import (
+    DDL,
     BigInteger,
     Boolean,
     Column,
     Computed,
     Date,
-    DDL,
-    event,
     ForeignKey,
     Integer,
     Sequence,
     String,
+    event,
     func,
 )
 from sqlalchemy.orm import relationship
@@ -24,7 +24,7 @@ event.listen(
     Base.metadata,
     "before_create",
     DDL(
-        f"CREATE SEQUENCE IF NOT EXISTS reference_number_seq START WITH 2000000000 INCREMENT BY 1 OWNED BY NONE;"
+        "CREATE SEQUENCE IF NOT EXISTS reference_number_seq START WITH 2000000000 INCREMENT BY 1 OWNED BY NONE;"
     ),
 )
 

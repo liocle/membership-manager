@@ -2,7 +2,6 @@ import os
 
 from database import Base, engine
 from dotenv import load_dotenv
-from models import Member, Membership
 from sqlalchemy.orm import Session
 
 # Load environment variables
