@@ -4,7 +4,7 @@
 line-length = 88
 target-version = "py311"
 exclude = ["alembic", "migrations"]
-extend-select = ["I"]  # Import cleanup
+lint.extend-select = ["I"]  # Import cleanup
 fix = true
 
 [tool.pytest.ini_options]
