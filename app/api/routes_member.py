@@ -1,3 +1,5 @@
+# File: app/api/routes_member.py
+
 """
 Routes for member-related search and query operations.
 """

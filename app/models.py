@@ -1,5 +1,7 @@
 # app/models.py
 
+# model.py defines the database models for the application as a class.
+
 from database import Base
 from sqlalchemy import (
     DDL,
@@ -46,7 +48,6 @@ class Member(Base):
         Date, nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
-    # Use the defined sequence in the reference_number column
     reference_number = Column(
         BigInteger,
         unique=True,
@@ -54,7 +55,6 @@ class Member(Base):
         server_default=reference_number_seq.next_value(),
     )
 
-    # Computed column generated from first_name and last_name
     full_name = Column(
         String,
         Computed("first_name || ' ' || last_name", persisted=True),
@@ -62,7 +62,9 @@ class Member(Base):
         index=True,
     )
 
-    memberships = relationship("Membership", back_populates="member")
+    memberships = relationship(
+        "Membership", back_populates="member", cascade="all, delete-orphan"
+    )
 
 
 class Membership(Base):

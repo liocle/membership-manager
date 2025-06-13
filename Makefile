@@ -218,6 +218,28 @@ psql_local:
 	@echo "Connecting to local PostgreSQL service..."
 	@PGPASSWORD=$(POSTGRES_PASSWORD) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -h $(POSTGRES_HOST_LOCAL) -p $(POSTGRES_PORT)
 
+show_memberships:
+	@echo "🔍 Showing content of 'memberships' table..."
+	docker exec -it membermgr_postgres_db \
+		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "SELECT * FROM memberships ORDER BY member_id, year;"
+
+show_members:
+	@echo "👥 Showing content of 'members' table..."
+	docker exec -it membermgr_postgres_db \
+		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "SELECT  FROM members ORDER BY id;"
+
+show_all:
+	@echo "👥 Members:"
+	docker exec -it membermgr_postgres_db \
+		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "SELECT id, full_name, email FROM members ORDER BY id;"
+	@echo ""
+	@echo "📆 Memberships:"
+	docker exec -it membermgr_postgres_db \
+		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
+		-c "SELECT * FROM memberships ORDER BY member_id, year;"
 
 ################################################################################
 # Help
@@ -288,6 +310,9 @@ help:
 	@echo "  psql_members    Show structure of 'members' table from inside Docker"
 	@echo "  psql_docker     Connect to PostgreSQL inside Docker container"
 	@echo "  psql_local      Connect to local PostgreSQL service (requires system PostgreSQL running)"
+	@echo "  show_memberships Show content of 'memberships' table from inside Docker"
+	@echo "  show_members 	 Show  content of 'members' table from inside Docker"
+	@echo "  show_all        Show content of 'members' and 'memberships' tables from inside Docker"
 	@echo ""
 	@echo "Help:"
 	@echo "  help           Show this help message"

@@ -1,4 +1,5 @@
-# api/database.py
+# app/database.py
+
 
 import os
 
@@ -26,7 +27,7 @@ DB_HOST = (
 # Construct DATABASE_URL using the assigned variables
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-# Create the SQLAlchemy engine - It takes the DATABASE_URL as an argument which contains the connection details (string) 
+# Create the SQLAlchemy engine - It takes the DATABASE_URL as an argument which contains the connection details (string)
 # The engine is used to connect to the database and execute queries
 engine = create_engine(DATABASE_URL, echo=True)
 

@@ -1,14 +1,21 @@
+# ./create_tables.py
+
+# === Standard lib
 import os
 
+# === Local
 from database import Base, engine
+
+# === Third-party
 from dotenv import load_dotenv
+from models import Member, Membership  # noqa: F401
 from sqlalchemy.orm import Session
 
-# Load environment variables
+# Load .env vars
 load_dotenv()
 print(f"📡 DATABASE_URL = '{os.getenv('DATABASE_URL')}'")
 
-# {{{ Debugging environment variable check ######
+# Debug vars
 print("Environment variables check:")
 for var in [
     "POSTGRES_USER",
@@ -19,27 +26,17 @@ for var in [
     "DATABASE_URL",
 ]:
     print(f"\t{var}: {os.getenv(var)}")
-
 print(" Environment variables check complete!")
 print(
     "________________________________________________________________________________"
 )
-# }}} Debugging environment variable check ######
 
-
+# Drop & recreate tables
 print("🔄 Dropping and recreating database tables in:", engine.url)
-
-# Drop all tables first (optional, for a clean start)
 Base.metadata.drop_all(bind=engine)
-
 print("✅ Dropped existing tables (if any)...")
-
-
-# Create tables
 Base.metadata.create_all(bind=engine)
 
-# Force SQLAlchemy to commit the changes
 session = Session(engine)
 session.commit()
-
 print("✅ Database tables created successfully!")
