@@ -1,4 +1,4 @@
-.PHONY: get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes
+.PHONY: all clean get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes
 
 include .env
 
