@@ -35,14 +35,15 @@ class Member(Base):
     __tablename__ = "members"
 
     id = Column(BigInteger, primary_key=True, index=True)
-    first_name = Column(String, index=True)
-    last_name = Column(String, index=True)
-    email = Column(String, unique=True, index=True, nullable=True)
-    phone = Column(String, nullable=True)
-    city = Column(String, index=True)
-    postal_code = Column(String, index=True)
+    first_name = Column(String(100), index=True)
+    last_name = Column(String(100), index=True)
+    city = Column(String(100), index=True)
+    street_address = Column(String(200), nullable=True)
+    postal_code = Column(String(20), index=True)
+    email = Column(String(320), unique=True, index=True, nullable=True)
+    phone = Column(String(20), nullable=True)
     no_postal_mail = Column(Boolean, default=False)
-    notes = Column(String, nullable=True)
+    notes = Column(String(2000), nullable=True)
     created_at = Column(Date, nullable=False, server_default=func.now())
     modified_at = Column(
         Date, nullable=False, server_default=func.now(), onupdate=func.now()
@@ -71,7 +72,7 @@ class Membership(Base):
     __tablename__ = "memberships"
 
     id = Column(BigInteger, primary_key=True, index=True)
-    member_id = Column(BigInteger, ForeignKey("members.id"))
+    member_id = Column(BigInteger, ForeignKey("members.id"), nullable=False, index=True)
     year = Column(Integer, index=True)
     amount = Column(Integer, nullable=False)
     is_paid = Column(Boolean, default=False)

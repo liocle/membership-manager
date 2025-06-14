@@ -1,8 +1,8 @@
 # app/schemas.py
 
-from typing import List, Optional
+from typing import List, Optional, Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
 
 
 class MembershipResponse(BaseModel):
@@ -16,14 +16,14 @@ class MembershipResponse(BaseModel):
 
 
 class MemberBase(BaseModel):
-    first_name: str
-    last_name: str
-    email: Optional[str] = None
+    first_name: Annotated[str, Field(min_length=1, max_length=100)]
+    last_name: Annotated[str, Field(min_length=1, max_length=100)]
+    city: Annotated[str, Field(min_length=1, max_length=100)]
+    email: Optional[EmailStr] = None
     street_address: Optional[str] = None
-    city: Optional[str] = None
-    postal_code: Optional[str] = None
+    postal_code: Optional[Annotated[str, Field(pattern=r"^\d{3,10}$")]] = None
+    phone: Optional[Annotated[str, Field(pattern=r"^\+?\d[\d\s]*$")]] = None
     notes: Optional[str] = None
-    phone: Optional[str] = None
     no_postal_mail: Optional[bool] = False
 
     model_config = {
@@ -33,8 +33,8 @@ class MemberBase(BaseModel):
                     "first_name": "First name",
                     "last_name": "Last name",
                     "email": "you@example.com",
-                    "street_address": "Main Street 12 A",
-                    "city": "Helsinki",
+                    "street_address": "Street Address 123",
+                    "city": "City Name",
                     "postal_code": "00100",
                     "notes": "Prefers email contact",
                     "phone": "0401234567",
@@ -50,12 +50,13 @@ class MemberCreate(MemberBase):
 
 
 class MemberUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    city: Optional[str] = None
-    postal_code: Optional[str] = None
+    first_name: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
+    last_name: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
+    city: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
+    email: Optional[EmailStr] = None
+    street_address: Optional[str] = None
+    postal_code: Optional[Annotated[str, Field(pattern=r"^\d{3,10}$")]] = None
+    phone: Optional[Annotated[str, Field(pattern=r"^\+?\d[\d\s]*$")]] = None
     notes: Optional[str] = None
     no_postal_mail: Optional[bool] = None
 

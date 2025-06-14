@@ -5,8 +5,9 @@ Routes for member-related search and query operations.
 """
 
 from database import get_db
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from models import Member, Membership
+from schemas import MemberCreate, MemberResponse, MemberUpdate
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/members", tags=["members"])
@@ -141,4 +142,51 @@ def search_by_reference(reference_number: str, db: Session = Depends(get_db)):
     )
     if not member:
         raise HTTPException(status_code=404, detail="Member not found")
+    return member
+
+
+@router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
+def create_member(member_in: MemberCreate, db: Session = Depends(get_db)):
+    """
+    Create a new member.
+
+    Args:
+        member_in (MemberCreate): Input data for creating a new member.
+        db (Session): SQLAlchemy DB session (injected).
+
+    Returns:
+        MemberResponse: The created member with reference number.
+    """
+    member = Member(**member_in.dict())
+    db.add(member)
+    db.commit()
+    db.refresh(member)
+    return member
+
+
+@router.put("/{id}", response_model=MemberResponse)
+def update_member(id: int, updates: MemberUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing member by ID.
+
+    Args:
+        id (int): ID of the member to update.
+        updates (MemberUpdate): Fields to update.
+        db (Session): SQLAlchemy DB session (injected).
+
+    Returns:
+        MemberResponse: The updated member object.
+
+    Raises:
+        HTTPException: If member is not found.
+    """
+    member = db.query(Member).filter(Member.id == id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    for key, value in updates.dict(exclude_unset=True).items():
+        setattr(member, key, value)
+
+    db.commit()
+    db.refresh(member)
     return member

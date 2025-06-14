@@ -33,7 +33,7 @@ print(
 
 # Drop & recreate tables
 print("🔄 Dropping and recreating database tables in:", engine.url)
-Base.metadata.drop_all(bind=engine)
+Base.metadata.drop_all(bind=engine, checkfirst=True)
 print("✅ Dropped existing tables (if any)...")
 Base.metadata.create_all(bind=engine)
 
