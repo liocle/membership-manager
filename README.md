@@ -22,17 +22,24 @@ This project is a personal initiative to deepen my backend development and DevOp
 ### **Testing & Development Tools**
 - **Pytest** (Unit and integration tests)
 - **pgAdmin** (Database visualization and admin)
+- **direnv** – Environment variable loader
+- **make** – One-command workflows
 
 ## **✅ Current Features**
-- **Structured Database Schema**: Members, memberships, payment status tracking
-- **Auto-generated Fields**: Computed `full_name` field for convenience and search
+- **RESTful API**: Core endpoints for creating, updating, deleting, and searching members and their yearly memberships
+- **Automatic Membership Creation**: New members receive an unpaid membership by default (configurable)
+- **Config-Driven Logic**: `.env` file powers key values (e.g. standard fee) using a central `config.py` module
+- **Auto-generated Fields**: Computed `full_name` field (via SQL) for better searching and display
 - **Dockerized Environment**: One-command setup with Docker Compose
+- **Database Seeding**: Sample data and full DB reset supported via `make` commands
 - **CI Pipeline Setup**: GitHub Actions configured and validated with placeholder tests; ready for integration with real test coverage.
 - **Database Seeding**: Sample data scripts for dev and test environments
+- **First Release Milestone**: Tagged as `api-basics` 
 
 ## **🚧 MVP Goals (In Progress)**
-- **CSV Import for Payment Updates**: Manual import script to update payment statuses
-- **Basic Admin UI**: Lightweight frontend using a simple form-based dashboard
+- **CSV Import for Payment Updates**: Script to mark memberships as paid based on bank statements
+- **PDF Letter Generation**: Welcome letters for newly registered members (WeasyPrint)
+- **Basic Admin UI**: React-based interface for manual corrections
 
 ## ▶️ Getting Started
 
