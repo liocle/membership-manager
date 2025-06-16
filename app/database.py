@@ -29,10 +29,10 @@ DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{POS
 
 # Create the SQLAlchemy engine - It takes the DATABASE_URL as an argument which contains the connection details (string)
 # The engine is used to connect to the database and execute queries
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=True, future=True)
 
 # Create a configured "Session" class - Configure the session class to be used with the engine for the database
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
 
 # Create a Base class for our models to inherit from
 Base = declarative_base()

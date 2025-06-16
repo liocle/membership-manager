@@ -1,8 +1,9 @@
 # app/schemas.py
 
-from typing import List, Optional, Annotated
+from datetime import datetime
+from typing import Annotated, List, Optional
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class MembershipResponse(BaseModel):
@@ -11,8 +12,17 @@ class MembershipResponse(BaseModel):
     is_paid: bool
     discounted: bool
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True,
+        "json_schema_extra": {
+            "example": {
+                "year": 2024,
+                "amount": 25,
+                "is_paid": True,
+                "discounted": False,
+            }
+        },
+    }
 
 
 class MemberBase(BaseModel):
@@ -27,6 +37,7 @@ class MemberBase(BaseModel):
     no_postal_mail: Optional[bool] = False
 
     model_config = {
+        "from_attributes": True,
         "json_schema_extra": {
             "examples": [
                 {
@@ -41,7 +52,7 @@ class MemberBase(BaseModel):
                     "no_postal_mail": False,
                 }
             ]
-        }
+        },
     }
 
 
@@ -66,5 +77,28 @@ class MemberResponse(MemberBase):
     reference_number: int
     memberships: List[MembershipResponse] = []
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True,
+        "json_schema_extra": {
+            "example": {
+                "id": 3,
+                "first_name": "Anna",
+                "last_name": "Korhonen",
+                "email": "anna@example.com",
+                "city": "Helsinki",
+                "postal_code": "00100",
+                "reference_number": 2000000003,
+                "no_postal_mail": False,
+                "memberships": [
+                    {"year": 2024, "amount": 25, "is_paid": True, "discounted": False}
+                ],
+            }
+        },
+    }
+
+
+class MembershipCreate(BaseModel):
+    year: Optional[int] = Field(default_factory=lambda: datetime.now().year)
+    amount: int = Field(
+        default=0, ge=0, description="Membership amount in euros (default: 0 = unpaid)"
+    )

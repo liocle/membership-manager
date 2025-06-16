@@ -228,7 +228,7 @@ show_members:
 	@echo "👥 Showing content of 'members' table..."
 	docker exec -it membermgr_postgres_db \
 		psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) \
-		-c "SELECT  FROM members ORDER BY id;"
+		-c "SELECT id, full_name, email FROM members ORDER BY id;"
 
 show_all:
 	@echo "👥 Members:"

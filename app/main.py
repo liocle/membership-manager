@@ -1,3 +1,5 @@
+# app/main.py
+
 """
 Main entrypoint for the Membership Manager API.
 
@@ -6,6 +8,7 @@ for different functional domains (members, miscellaneous).
 """
 
 from api.routes_member import router as member_router
+from api.routes_membership import router as membership_router
 from api.routes_misc import router as misc_router
 from fastapi import FastAPI
 
@@ -19,3 +22,4 @@ app = FastAPI(
 # Include API routers
 app.include_router(misc_router)
 app.include_router(member_router)
+app.include_router(membership_router)
