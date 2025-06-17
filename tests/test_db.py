@@ -1,5 +1,7 @@
 # app/tests/test_db.py
 
+import uuid
+
 from database import SessionLocal
 from models import Member
 
@@ -9,7 +11,7 @@ db = SessionLocal()
 new_member = Member(
     first_name="Alice",
     last_name="Johnson",
-    email="alice@example.com",
+    email=f"alice_{uuid.uuid4().hex}@example.com",
     phone="123456789",
     city="Helsinki",
     postal_code="00100",

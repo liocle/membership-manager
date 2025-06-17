@@ -35,9 +35,9 @@ def create_membership_for_member(
 
     # Determine internal logic flags
     amount = membership_in.amount
-    is_paid = amount > settings.UNPAID_MEMBERSHIP_AMOUNT
+    is_paid = amount > settings.UNPAID_MEMBERSHIP
     is_discounted = (
-        settings.UNPAID_MEMBERSHIP_AMOUNT < amount < settings.STANDARD_MEMBERSHIP_FEE
+        settings.UNPAID_MEMBERSHIP < amount < settings.STANDARD_MEMBERSHIP_FEE
     )
 
     # Create and persist the Membership

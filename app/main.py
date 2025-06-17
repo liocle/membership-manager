@@ -19,6 +19,18 @@ app = FastAPI(
     contact={"name": "Lionel", "email": "email@toto.com"},
 )
 
+
+@app.get("/")
+def read_root():
+    """
+    Root endpoint to verify API is running.
+
+    Returns:
+        dict: A welcome message.
+    """
+    return {"message": "Welcome to the Membership Manager API!"}
+
+
 # Include API routers
 app.include_router(misc_router)
 app.include_router(member_router)
