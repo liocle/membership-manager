@@ -129,6 +129,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.test
 .venv
 env/
 venv/
@@ -175,10 +176,6 @@ cython_debug/
 # docker image ids kept track by Makefile
 .image_ids
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3ee8230 (chore: update gitignore)
 # Ignore temporary sql database files
 Temp*.sql
 ./temp

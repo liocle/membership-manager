@@ -1,41 +1,26 @@
 # ./create_tables.py
 
-# === Standard lib
 import os
+import sys
 
-# === Local
+from config import settings
 from database import Base, engine
-
-# === Third-party
-from dotenv import load_dotenv
-from models import Member, Membership  # noqa: F401
+from models import Member, Membership
 from sqlalchemy.orm import Session
 
-# Load .env vars
-load_dotenv()
-print(f"📡 DATABASE_URL = '{os.getenv('DATABASE_URL')}'")
-
-# Debug vars
-print("Environment variables check:")
-for var in [
-    "POSTGRES_USER",
-    "POSTGRES_PASSWORD",
-    "POSTGRES_HOST",
-    "POSTGRES_PORT",
-    "POSTGRES_DB",
-    "DATABASE_URL",
-]:
-    print(f"\t{var}: {os.getenv(var)}")
-print(" Environment variables check complete!")
-print(
-    "________________________________________________________________________________"
-)
+print(f"📡 Creating tables on {settings.DATABASE_URL!r}")
 
 # Drop & recreate tables
 print("🔄 Dropping and recreating database tables in:", engine.url)
 Base.metadata.drop_all(bind=engine, checkfirst=True)
 print("✅ Dropped existing tables (if any)...")
 Base.metadata.create_all(bind=engine)
+
+print("__DEBUG:")
+print(
+    f"[CREATE_TABLES] ENV_FILE={os.getenv('ENV_FILE')!r}, DATABASE_URL={settings.DATABASE_URL!r}",
+    file=sys.stderr,
+)
 
 session = Session(engine)
 session.commit()

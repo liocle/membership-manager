@@ -1,7 +1,5 @@
 # app/alembic/env.py
-import os
-from dotenv import load_dotenv
-
+from config import settings
 
 from logging.config import fileConfig
 
@@ -12,11 +10,10 @@ from alembic import context
 
 from models import Base
 
-load_dotenv()  # ✅ Loads environment variables from .env
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = settings.DATABASE_URL
 
 if not DATABASE_URL:
-    raise ValueError("❌ DATABASE_URL is not set. Check your .env file!")
+    raise ValueError("❌ settings.DATABASE_URL is not set. Check your .env / ENV_FILE!")
 
 
 # this is the Alembic Config object, which provides

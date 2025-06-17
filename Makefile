@@ -1,4 +1,4 @@
-.PHONY: all clean get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes
+.PHONY: all clean get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes test
 
 include .env
 
@@ -170,7 +170,26 @@ nuke:
 
 # Run pytest
 run_pytest:
-	pytest tests/
+run_pytest:
+	# 1) Bring up Postgres once (maps 5432→localhost)
+	docker compose up -d postgres
+	# 2) Clear any lingering DB env‐vars, then load .env.test
+	env -u DATABASE_URL \
+	    -u POSTGRES_HOST \
+	    -u POSTGRES_USER \
+	    -u POSTGRES_PASSWORD \
+	    -u POSTGRES_DB \
+	    ENV_FILE=.env.test \
+	  python tests/setup_test_db.py
+	# 3) Same cleanup, then run pytest
+	env -u DATABASE_URL \
+	    -u POSTGRES_HOST \
+	    -u POSTGRES_USER \
+	    -u POSTGRES_PASSWORD \
+	    -u POSTGRES_DB \
+	    ENV_FILE=.env.test \
+	  pytest tests/
+
 
 ################################################################################
 # Tools and Utilities
