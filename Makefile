@@ -169,8 +169,7 @@ nuke:
 ################################################################################
 
 # Run pytest
-run_pytest:
-run_pytest:
+pytest_local:
 	# 1) Bring up Postgres once (maps 5432→localhost)
 	docker compose up -d postgres
 	# 2) Clear any lingering DB env‐vars, then load .env.test
@@ -219,7 +218,6 @@ alembic_copy_version:
 
 alembic_upload_version:
 	docker container cp ./app/alembic/versions/. membermgr_api:/app/alembic/versions/
-
 
 
 ################################################################################
@@ -313,7 +311,7 @@ help:
 	@echo "  nuke           Reset repository to the last commit (destructive action, removes all untracked files)"
 	@echo ""
 	@echo "Tests:"
-	@echo "  run_pytest     Run pytest"
+	@echo "  pytest_local    Run pytest on the local machine (requires local PostgreSQL service)"
 	@echo ""
 	@echo "Tools and utilities:"
 	@echo "  create_db      runs the create_tables.py script to create the database tables"
