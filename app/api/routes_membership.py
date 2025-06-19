@@ -1,6 +1,5 @@
 # ./app/api/routes_membership.py
 
-from config import settings
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
@@ -33,20 +32,11 @@ def create_membership_for_member(
     if not member:
         raise HTTPException(status_code=404, detail="Member not found")
 
-    # Determine internal logic flags
-    amount = membership_in.amount
-    is_paid = amount > settings.UNPAID_MEMBERSHIP
-    is_discounted = (
-        settings.UNPAID_MEMBERSHIP < amount < settings.STANDARD_MEMBERSHIP_FEE
-    )
-
     # Create and persist the Membership
     membership = Membership(
         member_id=member_id,
         year=membership_in.year,
-        amount=amount,
-        is_paid=is_paid,
-        discounted=is_discounted,
+        amount=membership_in.amount,
     )
     db.add(membership)
     db.commit()

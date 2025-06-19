@@ -1,32 +1,32 @@
-# app/tests/test_db.py
+# tests/test_db.py
 
 import uuid
 
-from database import SessionLocal
 from models import Member
 
-db = SessionLocal()
 
-# Create a test member (DO NOT set created_at, modified_at)
-new_member = Member(
-    first_name="Alice",
-    last_name="Johnson",
-    email=f"alice_{uuid.uuid4().hex}@example.com",
-    phone="123456789",
-    city="Helsinki",
-    postal_code="00100",
-    no_postal_mail=False,
-    notes="VIP Member",
-)
-db.add(new_member)
+def test_member_auto_fields(db_session):
+    """
+    Verify that reference_number, full_name,
+    created_at and modified_at are set automatically.
+    """
+    member = Member(
+        first_name="Alice",
+        last_name="Johnson",
+        email=f"alice_{uuid.uuid4().hex}@example.com",
+        phone="123456789",
+        city="Helsinki",
+        postal_code="00100",
+        no_postal_mail=False,
+        notes="VIP Member",
+    )
+    db_session.add(member)
+    db_session.commit()
+    db_session.refresh(member)
 
-db.commit()
-db.refresh(new_member)
-
-# ✅ Check if values are generated correctly
-print(f"✅ Generated Reference Number: {new_member.reference_number}")
-print(f"✅ Full Name: {new_member.full_name}")
-print(f"✅ Created At: {new_member.created_at}")  # Should not be None
-print(f"✅ Modified At: {new_member.modified_at}")  # Should not be None
-
-db.close()
+    # Because of SQLA stubs, Pyright thinks these are ColumnElements;
+    # it is known that they are attributes with values.
+    assert member.reference_number >= 2_000_000_000  # type: ignore[reportGeneralTypeIssues]
+    assert member.full_name == "Alice Johnson"  # type: ignore[reportGeneralTypeIssues]
+    assert member.created_at is not None
+    assert member.modified_at is not None
