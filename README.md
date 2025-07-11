@@ -48,8 +48,8 @@ This project is a personal initiative to deepen my backend development and DevOp
 git clone https://github.com/liocle/membership-manager.git
 cd membership-manager
 
-# Run development environment
-make dev
+# Run 
+make
 
 # API documentation available at:
 http://localhost:8000/docs
