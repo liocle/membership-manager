@@ -59,7 +59,9 @@ for name in "${!maps[@]}"; do
 done
 
 # ─── Report sizes & warn if too large ─────────────────────────────
-threshold="${CONTEXT_THRESHOLD:-800000}"
+
+threshold="${CONTEXT_THRESHOLD:-200000}"
+
 total=0
 
 echo -e "\n📊 Character counts:"

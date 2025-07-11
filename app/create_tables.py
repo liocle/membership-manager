@@ -8,8 +8,10 @@ from database import Base, engine
 from models import Member, Membership
 from sqlalchemy.orm import Session
 
-print(f"📡 Creating tables on {settings.DATABASE_URL!r}")
+# prevent Member/Membership imports from looking unused and having ruff formatter removing the imports
+_ = (Member, Membership)
 
+print(f"📡 Creating tables on {settings.DATABASE_URL!r}")
 # Drop & recreate tables
 print("🔄 Dropping and recreating database tables in:", engine.url)
 Base.metadata.drop_all(bind=engine, checkfirst=True)

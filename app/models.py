@@ -2,6 +2,7 @@
 
 # model.py defines the database models for the application as a class.
 
+from config import settings
 from database import Base
 from sqlalchemy import (
     DDL,
@@ -17,7 +18,7 @@ from sqlalchemy import (
     event,
     func,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 # Define the sequence for reference_number, starting at 2_000_000_000
 reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
@@ -79,3 +80,25 @@ class Membership(Base):
     discounted = Column(Boolean, default=False)
 
     member = relationship("Member", back_populates="memberships")
+
+    @validates("amount")
+    def _compute_payment_flags(self, _: str, value: int) -> int:
+        """
+        Whenever `amount` is set on a Membership, auto-compute:
+          - is_paid: True if amount > UNPAID_MEMBERSHIP
+          - discounted: True if in (UNPAID_MEMBERSHIP, STANDARD_MEMBERSHIP_FEE)
+        """
+        # note: value is the new amount
+        self.is_paid = value > settings.UNPAID_MEMBERSHIP
+        print(f"[DEBUG] _compute_payment_flags: amount={value}, is_paid={self.is_paid}")
+        print(
+            f"[DEBUG] _compute_payment_flags: UNPAID_MEMBERSHIP={settings.UNPAID_MEMBERSHIP}, "
+            f"STANDARD_MEMBERSHIP_FEE={settings.STANDARD_MEMBERSHIP_FEE}"
+        )
+        self.discounted = (
+            settings.UNPAID_MEMBERSHIP < value < settings.STANDARD_MEMBERSHIP_FEE
+        )
+        print(
+            f"[DEBUG] _compute_payment_flags: discounted={self.discounted}, STANDARD_MEMBERSHIP_FEE={settings.STANDARD_MEMBERSHIP_FEE} "
+        )
+        return value

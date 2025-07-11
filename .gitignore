@@ -181,5 +181,7 @@ Temp*.sql
 ./temp
 
 # Ignore Contextual AI specific files
-.context*
+context*
+Concatenate_Project_Files_For_GPT_Instructions.sh
+
 
