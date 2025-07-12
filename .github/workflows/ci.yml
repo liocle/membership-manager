@@ -44,6 +44,7 @@ jobs:
       POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
       PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
       POSTGRES_VERSION: ${{ vars.POSTGRES_VERSION }}
+      PYTHONPATH: ./app
 
     services:
       postgres:
