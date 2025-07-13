@@ -3,6 +3,7 @@
 name: CI
 
 on:
+  workflow_dispatch:   # Allows manual triggering of the workflow
   push:
     branches: [main]
   pull_request: {}
@@ -32,29 +33,31 @@ jobs:
 
   tests:
     name: Python Tests & Coverage
-    needs: lint
     runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+      PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+      POSTGRES_VERSION: ${{ vars.POSTGRES_VERSION }}
+      PYTHONPATH: ./app
 
     services:
       postgres:
         image: postgres:${{ vars.POSTGRES_VERSION }}
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports: [5432:5432]
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+        ports: ["${{ vars.POSTGRES_PORT }}:5432"]
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}"
-          --health-interval 10s --health-timeout 5s --health-retries 5
-
-    env:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      POSTGRES_HOST: localhost
-      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
-      PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
-      POSTGRES_VERSION: ${{ vars.POSTGRES_VERSION }}
+          --health-cmd "pg_isready -U ${{ vars.POSTGRES_USER }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4

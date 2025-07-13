@@ -65,4 +65,3 @@ def get_docs():
         "status": "ok",
         "message": "API documentation is available at /docs or /redoc.",
     }
-

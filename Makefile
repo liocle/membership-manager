@@ -3,8 +3,8 @@
 include .env
 
 ################################################################################
-# Build and Start
 ################################################################################
+# Build and Start
 # Default target: Build and start all services except ELK stack
 all: up_no_elk
 
@@ -187,7 +187,12 @@ pytest_local:
 	    -u POSTGRES_PASSWORD \
 	    -u POSTGRES_DB \
 	    ENV_FILE=.env.test \
-	  pytest tests/
+	  pytest \
+	    --cov=app \
+	    --cov-report=term-missing \
+	    --cov-report=xml \
+	    --cov-report=html \
+	    tests/
 
 
 ################################################################################
