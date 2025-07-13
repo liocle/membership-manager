@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ./Generate_Context.sh
+# ./Concatenate_Project_Files_For_GPT_Instructions.sh
 
 set -euo pipefail  # Exit immediatly on error, undefined variable, or failed command
 # see https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425 for details
@@ -59,9 +59,7 @@ for name in "${!maps[@]}"; do
 done
 
 # ─── Report sizes & warn if too large ─────────────────────────────
-
-threshold="${CONTEXT_THRESHOLD:-200000}"
-
+threshold="${CONTEXT_THRESHOLD:-800000}"
 total=0
 
 echo -e "\n📊 Character counts:"
