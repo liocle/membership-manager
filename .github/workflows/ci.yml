@@ -33,7 +33,6 @@ jobs:
 
   tests:
     name: Python Tests & Coverage
-    needs: lint
     runs-on: ubuntu-latest
 
     env:
