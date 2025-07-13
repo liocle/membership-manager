@@ -1,80 +1,133 @@
+ # Membership Manager
 
-# **Membership Manager**
+A containerized FastAPI application for managing members and yearly memberships, built with modern Python tooling and an automated GitHub Actions–backed CI pipeline.
 
-## **📌 Project Overview**
-Membership Manager is a database-driven web application designed to streamline the management of a user base, including member records, subscriptions, and payment tracking. The goal is to replace an outdated system with a modern, maintainable solution that improves accuracy and efficiency.
+---
 
-This project is a personal initiative to deepen my backend development and DevOps skills by building a full-stack application from scratch with real-world features and infrastructure.
+## 🔍 Project Overview
 
-## **🛠️ Tech Stack**
+- **Purpose**: CRUD‑style API to create, query, update, and delete members and their yearly memberships.
+- **Goals**:
+  1. Practice backend development with FastAPI, SQLAlchemy, and Pydantic
+  2. Enforce consistent development and testing environments via Docker Compose
+  3. Automate linting, testing, and coverage reporting in CI
 
-### **Backend**
-- **Python** (Core backend logic)
-- **FastAPI** (High-performance web framework for API development)
-- **SQLAlchemy** (ORM for database modeling)
-- **Alembic** (Database migrations and schema versioning)
-- **PostgreSQL** (Relational database)
+---
 
-### **Infrastructure & Deployment**
-- **Docker & Docker Compose** (Containerized local development and deployment)
-- **GitHub Actions** (CI pipeline for testing and integration)
+## 🛠 Tech Stack
 
-### **Testing & Development Tools**
-- **Pytest** (Unit and integration tests)
-- **pgAdmin** (Database visualization and admin)
-- **direnv** – Environment variable loader
-- **make** – One-command workflows
+- Python 3.11
+- FastAPI (HTTP API)
+- SQLAlchemy + Alembic (ORM & migrations)
+- Pydantic (settings & schemas)
+- PostgreSQL
+- Docker & Docker Compose 
+- Make
+- GitHub Actions (CI)
 
-## **✅ Current Features**
-- **RESTful API**: Core endpoints for creating, updating, deleting, and searching members and their yearly memberships
-- **Automatic Membership Creation**: New members receive an unpaid membership by default (configurable)
-- **Config-Driven Logic**: `.env` file powers key values (e.g. standard fee) using a central `config.py` module
-- **Auto-generated Fields**: Computed `full_name` field (via SQL) for better searching and display
-- **Dockerized Environment**: One-command setup with Docker Compose
-- **Database Seeding**: Sample data and full DB reset supported via `make` commands
-- **CI Pipeline Setup**: GitHub Actions configured and validated with placeholder tests; ready for integration with real test coverage.
-- **Database Seeding**: Sample data scripts for dev and test environments
-- **First Release Milestone**: Tagged as `api-basics` 
+---
 
-## **🚧 MVP Goals (In Progress)**
-- **CSV Import for Payment Updates**: Script to mark memberships as paid based on bank statements
-- **PDF Letter Generation**: Welcome letters for newly registered members (WeasyPrint)
-- **Basic Admin UI**: React-based interface for manual corrections
+## 🚀 Getting Started
 
-## ▶️ Getting Started
+1. **Clone & enter**
+
+   ```bash
+   git clone https://github.com/liocle/membership-manager.git
+   cd membership-manager
+   ```
+
+2. **Set up Python**
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r app/requirements.txt
+   ```
+
+3. **Configure environment**
+
+   - Copy `.env.example` to `.env` and fill in values
+   - Ensure `.env.test` contains test DB settings
+
+4. **Start services**
+
+   ```bash
+   make
+   ```
+
+   - API docs: http://localhost:8000/docs
+
+---
+
+## ✅ CI & Branch Protection
+
+- **Workflow file**: `.github/workflows/ci.yml`
+- **Triggers**: `pull_request` and manual via `workflow_dispatch`
+- **Jobs**:
+  1. **Lint & Format Check** (`ruff`, `black --check`)
+  2. **Python Tests & Coverage** (`pytest --cov=app`, uploads `coverage.xml`)
+
+**Branch protection** on `main` requires:
+- Passing **Python Tests & Coverage** status check
+- Lint check executed but do not fail PRs
+
+---
+
+## 🧪 Testing & Coverage
+
+Run tests locally with coverage:
 
 ```bash
-# Clone the repository
-git clone https://github.com/liocle/membership-manager.git
-cd membership-manager
-
-# Run 
-make
-
-# API documentation available at:
-http://localhost:8000/docs
+make pytest_local
 ```
 
+This will:
+- Spin up Postgres via Docker Compose
+- Recreate the test database
+- Execute `pytest` with:
+  - `--cov=app`
+  - `--cov-report=term-missing`
+  - `--cov-report=xml`
+  - `--cov-report=html`
 
-## 🛠 Developer Setup
+Artifacts:
+- `coverage.xml` (CI artifact)
+- `htmlcov/index.html` (open in browser)
 
-This project uses:
+---
 
-- `pyenv` for Python version management (`.python-version`)
-- `venv` for isolated dependencies (`.venv/`)
-- `direnv` for automatic environment loading (`.envrc`, `.env`)
-- `pip` + `requirements.txt` for dependency tracking
+## 📁 Project Structure
 
-### One-time setup:
-```bash
-pyenv install 3.11.9
-pyenv local 3.11.9
-python -m venv .venv
-direnv allow
-pip install -r requirements.txt
+```
+membership-manager/
+├─ .github/workflows/ci.yml
+├─ docker-compose.yml
+├─ Makefile
+├─ .env, .env.test
+├─ app/
+│  ├─ api/          # route modules
+│  ├─ models.py     # SQLAlchemy models
+│  ├─ schemas.py    # Pydantic schemas
+│  ├─ config.py     # settings loader
+│  ├─ create_tables.py
+│  └─ database.py
+├─ tests/           # pytest suite
+├─ coverage.xml     # coverage artifact
+├─ htmlcov/         # HTML coverage report
+└─ requirements.txt
 ```
 
-## 👤 Author
-Created and maintained by **Lionel Clerc**. This project serves as a foundation for learning and building backend services using modern Python tools and DevOps practices.
+---
 
+## ⚙️ Makefile Highlights
 
+- `make`      – start Postgres, API & pgAdmin
+- `make pytest_local`   – run tests with coverage reports
+- `make create_db`      – run DB init script
+- `make seed_db`        – seed sample data
+- `make help`           – display full command list
+---
+
+## 📄 License
+
+MIT © 2025 Lionel Clerc
