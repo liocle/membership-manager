@@ -46,6 +46,7 @@ class Member(Base):
     no_postal_mail = Column(Boolean, default=False)
     notes = Column(String(2000), nullable=True)
     created_at = Column(Date, nullable=False, server_default=func.now())
+    organization = Column(String(200), nullable=True)
     modified_at = Column(
         Date, nullable=False, server_default=func.now(), onupdate=func.now()
     )
