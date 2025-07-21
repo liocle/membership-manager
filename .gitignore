@@ -184,6 +184,7 @@ Temp*.sql
 context*
 Concatenate_Project_Files_For_GPT_Instructions.sh
 
+
 # Ignore all generated files in output/
 output/**
 !output/.gitkeep
