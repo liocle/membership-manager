@@ -1,10 +1,15 @@
-.PHONY: all clean get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache re_rm_volumes test
+.PHONY: all clean get_images_id re up_all logs logs_errors logs_grep logs_postgres logs_api \
+ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_no_cache \
+re_rm_volumes test lint_fix psql_members psql_docker psql_local show_memberships show_members \
+show_all create_db seed_db alembic_generate_migration alembic_upgrade_head alembic_history \
+alembic_downgrade alembic_copy_version alembic_upload_version clean_volumes clean_orphans \
+clean_images clean_all down up_no_elk
 
 include .env
 
 ################################################################################
-################################################################################
 # Build and Start
+################################################################################
 # Default target: Build and start all services except ELK stack
 all: up_no_elk
 
@@ -226,6 +231,14 @@ alembic_upload_version:
 
 
 ################################################################################
+# Linting & Formatting
+################################################################################
+
+lint_fix:
+	ruff check app tests app/scripts --fix
+
+
+################################################################################
 # PSQL
 ################################################################################
 psql_members:
@@ -328,6 +341,8 @@ help:
 	@echo "  alembic_copy_version            Copy the alembic versions from the container to the local directory"
 	@echo "  alembic_upload_version          Copy the alembic versions from the local directory to the container"
 	@echo ""
+	@echo "Linting & Formatting:"
+	@echo "  lint_fix       Run ruff to check and fix linting issues in app, scripts and tests directories"
 	@echo "PSQL:"
 	@echo "  psql_members    Show structure of 'members' table from inside Docker"
 	@echo "  psql_docker     Connect to PostgreSQL inside Docker container"
