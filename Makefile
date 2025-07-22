@@ -3,7 +3,8 @@ ps ps_short ps_inspect exec_backend exec_db stop_all stats sys_df help nuke re_n
 re_rm_volumes test lint_fix psql_members psql_docker psql_local show_memberships show_members \
 show_all create_db seed_db alembic_generate_migration alembic_upgrade_head alembic_history \
 alembic_downgrade alembic_copy_version alembic_upload_version clean_volumes clean_orphans \
-clean_images clean_all down up_no_elk
+clean_images clean_all down up_no_elk  pytest_local
+
 
 include .env
 
@@ -189,10 +190,10 @@ pytest_local:
 	env -u DATABASE_URL \
 	    -u POSTGRES_HOST \
 	    -u POSTGRES_USER \
-	    -u POSTGRES_PASSWORD \
+		-u POSTGRES_PASSWORD \
 	    -u POSTGRES_DB \
 	    ENV_FILE=.env.test \
-	  pytest \
+	  pytest -v \
 	    --cov=app \
 	    --cov-report=term-missing \
 	    --cov-report=xml \
