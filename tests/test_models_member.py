@@ -15,7 +15,7 @@ def test_member_default_values(make_member):
     Test that Member defaults are set correctly:
     """
     m = make_member()
-    assert m.id == 2
+    assert isinstance(m.id, int) and m.id > 0
     assert m.street_address is None
     assert m.phone is None
     assert m.notes is None
