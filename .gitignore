@@ -191,3 +191,9 @@ output/**
 !output/letters/
 !output/letters/.gitkeep
 
+# Ignore notes.nd
+notes.md
+
+# Ignore csv files
+*.csv
+
