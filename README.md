@@ -1,47 +1,64 @@
 
-# **Membership Manager**
+# Membership Manager
 
-## **📌 Project Overview**
-Membership Manager is a database-driven web application designed to streamline the management of a user base, including member records, subscriptions, and payment tracking. The goal is to replace an outdated system with a modern, maintainable solution that improves accuracy and efficiency.
+A containerized FastAPI application for managing members and yearly memberships, built with modern Python tooling and an automated GitHub Actions–backed CI pipeline.
 
-This project is a personal initiative to deepen my backend development and DevOps skills by building a full-stack application from scratch with real-world features and infrastructure.
+---
 
-## **🛠️ Tech Stack**
+## 🔍 Project Overview
 
-### **Backend**
-- **Python** (Core backend logic)
-- **FastAPI** (High-performance web framework for API development)
-- **SQLAlchemy** (ORM for database modeling)
-- **Alembic** (Database migrations and schema versioning)
-- **PostgreSQL** (Relational database)
+- **Purpose**: CRUD-style API to create, query, update, and delete members and their yearly memberships.
+- **Goals**:
+  1. Practice backend development with FastAPI, SQLAlchemy, and Pydantic
+  2. Enforce consistent development and testing environments via Docker Compose
+  3. Automate linting, testing, and coverage reporting in CI
 
-### **Infrastructure & Deployment**
-- **Docker & Docker Compose** (Containerized local development and deployment)
-- **GitHub Actions** (CI pipeline for testing and integration)
+---
 
-### **Testing & Development Tools**
-- **Pytest** (Unit and integration tests)
-- **pgAdmin** (Database visualization and admin)
-- **direnv** – Environment variable loader
-- **make** – One-command workflows
+## 🛠 Tech Stack
 
-## **✅ Current Features**
-- **RESTful API**: Core endpoints for creating, updating, deleting, and searching members and their yearly memberships
-- **Automatic Membership Creation**: New members receive an unpaid membership by default (configurable)
-- **Config-Driven Logic**: `.env` file powers key values (e.g. standard fee) using a central `config.py` module
-- **Auto-generated Fields**: Computed `full_name` field (via SQL) for better searching and display
-- **Dockerized Environment**: One-command setup with Docker Compose
-- **Database Seeding**: Sample data and full DB reset supported via `make` commands
-- **CI Pipeline Setup**: GitHub Actions configured and validated with placeholder tests; ready for integration with real test coverage.
-- **Database Seeding**: Sample data scripts for dev and test environments
-- **First Release Milestone**: Tagged as `api-basics` 
+- Python 3.11
+- FastAPI (HTTP API)
+- SQLAlchemy + Alembic (ORM & migrations)
+- Pydantic (settings & schemas)
+- PostgreSQL (database)
+- Docker & Docker Compose
+- Make
+- GitHub Actions (CI)
 
-## **🚧 MVP Goals (In Progress)**
-- **CSV Import for Payment Updates**: Script to mark memberships as paid based on bank statements
-- **PDF Letter Generation**: Welcome letters for newly registered members (WeasyPrint)
-- **Basic Admin UI**: React-based interface for manual corrections
+---
 
-## ▶️ Getting Started
+## Getting Started
+
+1. **Clone & enter**
+   ```sh
+   git clone https://github.com/liocle/membership-manager.git
+   cd membership-manager
+    ```
+2. **Set up Python**
+
+    ```sh
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    ```
+
+3. **Configure environment**
+- Copy `.env.example` to `.env` and adjust settings as needed.
+- Ensure .env.test contains test DB.
+
+4. **Start services**
+   ```sh
+   make
+   ```
+   - API docs: http://localhost:8000/docs
+
+5. **Run tests**
+   ```sh
+    make pytest_local
+    ```
+
+## Getting Started
 
 ```bash
 # Clone the repository
