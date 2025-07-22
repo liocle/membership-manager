@@ -11,6 +11,7 @@ A containerized FastAPI application for managing members and yearly memberships,
   1. Practice backend development with FastAPI, SQLAlchemy, and Pydantic
   2. Enforce consistent development and testing environments via Docker Compose
   3. Automate linting, testing, and coverage reporting in CI
+  4. Generate PDF welcome letters for new or existing members
 
 ---
 
@@ -24,6 +25,7 @@ A containerized FastAPI application for managing members and yearly memberships,
 - Docker & Docker Compose 
 - Make
 - GitHub Actions (CI)
+- WeasyPrint & Jinja2 (PDF generation)
 
 ---
 
@@ -56,6 +58,7 @@ A containerized FastAPI application for managing members and yearly memberships,
    ```
 
    - API docs: http://localhost:8000/docs
+   - PDF letters are saved to output/letters/ by default
 
 ---
 
@@ -70,6 +73,7 @@ A containerized FastAPI application for managing members and yearly memberships,
 **Branch protection** on `main` requires:
 - Passing **Python Tests & Coverage** status check
 - Lint check executed but do not fail PRs
+- PDF Generation Tests
 
 ---
 
@@ -110,8 +114,15 @@ membership-manager/
 │  ├─ schemas.py    # Pydantic schemas
 │  ├─ config.py     # settings loader
 │  ├─ create_tables.py
-│  └─ database.py
+│  ├─ database.py
+│  └─ pdf/          # PDF generation scripts & templates
+│     ├─ generate_welcome_letter.py
+│     └─ templates/
+│        └─ welcome_letter.html.jinja2
+├─ output/
+│  └─ letters/      # Generated PDF files (gitignored)
 ├─ tests/           # pytest suite
+│  └─ test_generate_welcome_letter_route.py
 ├─ coverage.xml     # coverage artifact
 ├─ htmlcov/         # HTML coverage report
 └─ requirements.txt
@@ -119,7 +130,7 @@ membership-manager/
 
 ---
 
-## ⚙️ Makefile Highlights
+## ⚙️ Makefile
 
 - `make`                – start Postgres, API & pgAdmin
 - `make pytest_local`   – run tests with coverage reports
