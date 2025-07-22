@@ -45,7 +45,7 @@ def make_member(db_session):
         data = {
             "first_name": "Test",
             "last_name": "User",
-            "email": f"test_{uuid.uuid4().hex}@example.test",
+            "email": f"test_{uuid.uuid4().hex}@example.com",
         }
         data.update(overrides)
 
