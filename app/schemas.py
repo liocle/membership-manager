@@ -34,6 +34,7 @@ class MemberBase(BaseModel):
     postal_code: Optional[Annotated[str, Field(pattern=r"^\d{3,10}$")]] = None
     phone: Optional[Annotated[str, Field(pattern=r"^\+?\d[\d\s]*$")]] = None
     notes: Optional[str] = None
+    organization: Optional[str] = None
     no_postal_mail: Optional[bool] = False
 
     model_config = {
@@ -43,6 +44,7 @@ class MemberBase(BaseModel):
                 {
                     "first_name": "First name",
                     "last_name": "Last name",
+                    "organization": "Example Organization",
                     "email": "you@example.com",
                     "street_address": "Street Address 123",
                     "city": "City Name",
@@ -61,6 +63,7 @@ class MemberCreate(MemberBase):
 
 
 class MemberUpdate(BaseModel):
+    organization: Optional[str] = None
     first_name: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
     last_name: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
     city: Optional[Annotated[str, Field(min_length=1, max_length=100)]] = None
@@ -82,10 +85,11 @@ class MemberResponse(MemberBase):
         "json_schema_extra": {
             "example": {
                 "id": 3,
-                "first_name": "Anna",
-                "last_name": "Korhonen",
-                "email": "anna@example.com",
-                "city": "Helsinki",
+                "first_name": "First name",
+                "last_name": "Last name",
+                "organization": "Example Organization",
+                "email": "firstname.lastname@example.com",
+                "city": "City Name",
                 "postal_code": "00100",
                 "reference_number": 2000000003,
                 "no_postal_mail": False,

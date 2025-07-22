@@ -1,7 +1,9 @@
 # tests/conftest.py
 import os
-import uuid
 
+os.environ["ENV_FILE"] = ".env.test"
+
+import uuid
 import pytest
 from config import settings
 from models import Member
@@ -13,15 +15,7 @@ _ = tests.setup_test_db  # Prevent ruff from removing the import
 
 @pytest.fixture(scope="session", autouse=True)
 def initialize_test_database():
-    """
-    1. Tell Pydantic to load .env.test
-    2. Drop & recreate the test database
-    3. Create all tables
-    """
-    os.environ["ENV_FILE"] = ".env.test"
-    settings.ENV = "test"
     yield
-    # (Optional teardown could go here)
 
 
 @pytest.fixture

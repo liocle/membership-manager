@@ -45,6 +45,7 @@ services:
       - "${API_PORT}:8000"
     volumes:
       - ./app/seed:/app/seed  # Mounting seed data
+      - ./output:/app/output
     depends_on:
       postgres:
         condition: service_healthy

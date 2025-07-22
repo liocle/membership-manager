@@ -1,4 +1,4 @@
- # Membership Manager
+# Membership Manager
 
 A containerized FastAPI application for managing members and yearly memberships, built with modern Python tooling and an automated GitHub Actions–backed CI pipeline.
 
@@ -121,7 +121,7 @@ membership-manager/
 
 ## ⚙️ Makefile Highlights
 
-- `make`      – start Postgres, API & pgAdmin
+- `make`                – start Postgres, API & pgAdmin
 - `make pytest_local`   – run tests with coverage reports
 - `make create_db`      – run DB init script
 - `make seed_db`        – seed sample data

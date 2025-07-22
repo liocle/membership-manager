@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Letter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <p>Dear {{ member.first_name }} {{ member.last_name }},</p>
+
+    <p>Welcome to our association! We're glad to have you as a member for the year {{ membership.year }}.</p>
+
+    <p>Your reference number is: <strong>{{ member.reference_number }}</strong></p>
+
+    <p>
+        The membership fee is €25.
+        If you haven't paid yet, please use your reference number when making the payment.
+    </p>
+
+    <p>Thank you for your support!</p>
+
+    <p>Kind regards,<br>
+    The Membership Team</p>
+</body>
+</html>
+

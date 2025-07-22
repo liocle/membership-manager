@@ -5,11 +5,13 @@ Routes for member-related search and query operations.
 """
 
 from datetime import datetime
+from pathlib import Path
 
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from models import Member, Membership
+from pdf.generate_welcome_letter import generate_pdf
 from schemas import MemberCreate, MemberResponse, MemberUpdate
 from sqlalchemy.orm import Session
 
@@ -301,3 +303,32 @@ def delete_member(member_id: int, db: Session = Depends(get_db)) -> dict:
     db.commit()
 
     return {"message": f"Member with ID {member_id} was deleted successfully."}
+
+
+@router.post("/members/{member_id}/generate_welcome_letter")
+def generate_letter(member_id: int, db: Session = Depends(get_db)):
+    """
+    Generate and save a PDF welcome letter for a given member.
+
+    Args:
+        member_id (int): ID of the member.
+        db (Session): SQLAlchemy database session.
+
+    Returns:
+        dict: Confirmation message and path to generated file.
+    """
+    member = db.query(Member).filter(Member.id == member_id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    if not member.memberships:
+        raise HTTPException(status_code=400, detail="Member has no memberships")
+
+    membership = sorted(member.memberships, key=lambda m: m.year, reverse=True)[0]
+
+    try:
+        filepath = generate_pdf(member, membership, output_dir=Path("output/letters"))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {e}")
+
+    return {"message": "PDF generated successfully", "path": str(filepath)}
