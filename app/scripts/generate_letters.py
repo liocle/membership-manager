@@ -1,7 +1,14 @@
+#!/usr/bin/env python3
+
 # app/scripts/generate_letters.py
 
+import sys
 from pathlib import Path
 
+# Add /app to PYTHONPATH
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+# Now the rest of your script...
 from database import SessionLocal
 from models import Member
 from pdf.generate_welcome_letter import generate_pdf

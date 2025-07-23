@@ -1,9 +1,9 @@
 # tests/test_routes_membership.py
 import pytest
+from database import get_db
 from fastapi.testclient import TestClient
 
 from app.main import app
-from database import get_db
 
 client = TestClient(app)
 

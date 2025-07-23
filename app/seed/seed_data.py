@@ -59,6 +59,35 @@ seed_data = [
             {"year": 2023, "amount": 25, "discounted": False},
         ],
     },
+    {
+        "first_name": "Diana",
+        "last_name": "Example",
+        "email": "diana@example.com",
+        "phone": "0400000000",
+        "street_address": "Satamakatu 5 A",
+        "city": "Tampere",
+        "postal_code": "33100",
+        "no_postal_mail": False,
+        "notes": "New member with unpaid membership",
+        "memberships": [
+            {"year": 2025, "amount": 0, "discounted": False},  # Unpaid
+        ],
+    },
+    {
+        "first_name": "Erkki",
+        "last_name": "Legacy",
+        "email": "erkki@example.com",
+        "phone": "0401234567",
+        "street_address": "Aurantie 5 A",
+        "city": "Turku",
+        "postal_code": "20100",
+        "no_postal_mail": False,
+        "notes": "Has 2024 membership, 2025 unpaid",
+        "memberships": [
+            {"year": 2024, "amount": 25, "discounted": False},  # Paid
+            {"year": 2025, "amount": 0, "discounted": False},  # Unpaid
+        ],
+    },
 ]
 
 # Insert members with nested memberships
@@ -75,7 +104,7 @@ for entry in seed_data:
                 year=m["year"],
                 amount=m["amount"],
                 discounted=m["discounted"],
-                is_paid=True,
+                is_paid=m["amount"] > 0,  # Paid if amount > 0
             )
         )
 

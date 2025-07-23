@@ -1,11 +1,11 @@
 # tests/test_routes_member_search.py
 
 import pytest
+from database import get_db
 from fastapi.testclient import TestClient
+from models import Member, Membership
 
 from app.main import app
-from database import get_db
-from models import Membership, Member
 
 client = TestClient(app)
 

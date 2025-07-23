@@ -4,8 +4,8 @@ import os
 os.environ["ENV_FILE"] = ".env.test"
 
 import uuid
+
 import pytest
-from config import settings
 from models import Member
 
 import tests.setup_test_db  # noqa: F401

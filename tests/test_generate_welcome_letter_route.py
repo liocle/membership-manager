@@ -3,12 +3,12 @@
 from pathlib import Path
 
 import pytest
+from database import get_db
 from fastapi.testclient import TestClient
+from models import Member, Membership
 from sqlalchemy.orm import Session
 
 from app.main import app
-from models import Member, Membership
-from database import get_db
 
 client = TestClient(app)
 

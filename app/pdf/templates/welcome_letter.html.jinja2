@@ -1,32 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <title>Welcome Letter</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
-            line-height: 1.6;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <style>
+    /* ─── Page Setup ───────────────────────────────── */
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+    body {
+      margin: 0; /* we’ll handle all spacing ourselves */
+      font-family: "Helvetica", sans-serif;
+      font-size: 9pt;
+      line-height: 1.4;
+    }
+
+    /* ─── Addresses (absolute) ─────────────────────── */
+    .org-address {
+      position: absolute;
+      top: 25mm;   /* adjust to your window */
+      left: 15mm;
+      line-height: 1.2;
+      font-weight: bold;
+    }
+    .member-address-block {
+      position: absolute;
+      top: 40mm;   /* below the org-address */
+      left: 15mm;
+      line-height: 1.2;
+    }
+
+    /* ─── Flow Wrapper ─────────────────────────────── */
+    .content {
+      margin-top: 60mm; /* clear the member-address-block */
+      /* optional: padding: 0 2cm; */
+    }
+
+    /* ─── Separator ───────────────────────────────── */
+    .section-separator {
+      border: none;
+      border-top: 1px solid black;
+      margin: 2em 0;
+    }
+
+    /* ─── Title ───────────────────────────────────── */
+    .title-block h2 {
+      font-size: 11pt;
+      margin: 0;
+    }
+
+    /* ─── Body Text ───────────────────────────────── */
+    .body-block {
+      margin-top: 1em;
+      text-align: justify;
+    }
+
+    /* ─── Payment Info ───────────────────────────── */
+    .payment-block {
+      margin-top: 3em;
+      padding-top: 1em;
+      border-top: 1px solid black;
+      line-height: 1.2;
+    }
+
+    a {
+      color: black;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <p>Dear {{ member.first_name }} {{ member.last_name }},</p>
 
-    <p>Welcome to our association! We're glad to have you as a member for the year {{ membership.year }}.</p>
+  <!-- 1) Sender’s address (absolute) -->
+  <div class="org-address">
+    ToTac ry<br>
+    Hämeentie 42<br>
+    00100 Helsinki<br>
+    <a href="http://www.organisation.com">www.organisation.com</a>
+  </div>
 
-    <p>Your reference number is: <strong>{{ member.reference_number }}</strong></p>
+  <!-- 2) Recipient’s address (absolute) -->
+  <div class="member-address-block">
+    {{ member.first_name }} {{ member.last_name }}<br>
+    {% if member.street_address %}
+      {{ member.street_address }}<br>
+    {% endif %}
+    {{ member.postal_code }} {{ member.city }}
+  </div>
 
-    <p>
-        The membership fee is €25.
-        If you haven't paid yet, please use your reference number when making the payment.
-    </p>
+  <!-- 3) Everything below as a “flow” -->
+  <div class="content">
+    <hr class="section-separator">
 
-    <p>Thank you for your support!</p>
+    <div class="title-block">
+      <h2>Tervetuloa ToTaCin jäseneksi ja mukaan järjestön toimintaan!</h2>
+    </div>
 
-    <p>Kind regards,<br>
-    The Membership Team</p>
+    <div class="body-block">
+      <p>Lorem ipsum dolor sit amet…</p>
+      <p>Second paragraph…</p>
+    </div>
+
+    <hr class="section-separator">
+
+    <div class="payment-block">
+      <strong>ToTaC RY:N JÄSENMAKSU VUODELLE {{ membership.year }}</strong><br><br>
+      VAIHTOEHTO 1: 30 € / VUOSI<br>
+      VAIHTOEHTO 2: 10 € / VUOSI (opiskelijat, työttömät, eläkeläiset)<br><br>
+      Maksetaan tilille <strong>FI36 4730 0010 123450 / ToTac ry</strong><br>
+      Muista merkitä viitenumero: <strong>{{ member.reference_number }}</strong><br><br>
+      <a href="http://www.organisation.com">http://www.organisation.com</a>
+    </div>
+  </div>
+
 </body>
 </html>
 
