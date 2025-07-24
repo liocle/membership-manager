@@ -1,118 +1,168 @@
 <!DOCTYPE html>
 <html lang="fi">
-<head>
-  <meta charset="UTF-8">
-  <style>
-    /* ─── Page Setup ───────────────────────────────── */
-    @page {
-      size: A4;
-      margin: 2cm;
-    }
-    body {
-      margin: 0; /* we’ll handle all spacing ourselves */
-      font-family: "Helvetica", sans-serif;
-      font-size: 9pt;
-      line-height: 1.4;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* ─── Page Setup ───────────────────────────────── */
+      @page {
+        size: A4;
+        margin: 1.5cm;
+      }
+      body {
+        margin: 0;
+        font-family: "Helvetica", sans-serif;
+        font-size: 10pt;
+        line-height: 1.4;
+      }
 
-    /* ─── Addresses (absolute) ─────────────────────── */
-    .org-address {
-      position: absolute;
-      top: 25mm;   /* adjust to your window */
-      left: 15mm;
-      line-height: 1.2;
-      font-weight: bold;
-    }
-    .member-address-block {
-      position: absolute;
-      top: 40mm;   /* below the org-address */
-      left: 15mm;
-      line-height: 1.2;
-    }
+      /* ─── Addresses (absolute) ─────────────────────── */
+      .org-address {
+        position: absolute;
+        top: 0mm;
+        left: 0mm;
+        line-height: 1.2;
+        font-weight: bold;
+      }
 
-    /* ─── Flow Wrapper ─────────────────────────────── */
-    .content {
-      margin-top: 60mm; /* clear the member-address-block */
-      /* optional: padding: 0 2cm; */
-    }
+      .member-address-block {
+        position: absolute;
+        top: 20mm;
+        left: 0mm;
+        line-height: 1.2;
+      }
 
-    /* ─── Separator ───────────────────────────────── */
-    .section-separator {
-      border: none;
-      border-top: 1px solid black;
-      margin: 2em 0;
-    }
+      /* ─── Flow Wrapper ─────────────────────────────── */
+      .content {
+        margin-top: 40mm;
+      }
 
-    /* ─── Title ───────────────────────────────────── */
-    .title-block h2 {
-      font-size: 11pt;
-      margin: 0;
-    }
+      /* ─── Separator ───────────────────────────────── */
+      .section-separator {
+        border: none;
+        border-top: 1px solid black;
+        margin: 0;
+      }
 
-    /* ─── Body Text ───────────────────────────────── */
-    .body-block {
-      margin-top: 1em;
-      text-align: justify;
-    }
+      /* ─── Title ───────────────────────────────────── */
+      .title-block h2 {
+        font-size: 11pt;
+        margin: 0;
+      }
 
-    /* ─── Payment Info ───────────────────────────── */
-    .payment-block {
-      margin-top: 3em;
-      padding-top: 1em;
-      border-top: 1px solid black;
-      line-height: 1.2;
-    }
+      /* ─── Body Text ───────────────────────────────── */
+      .body-block {
+        margin-top: 1em;
+        text-align: justify;
+      }
 
-    a {
-      color: black;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
+      /* ─── Payment Info ───────────────────────────── */
+      .payment-block {
+        /* margin-top: 3em; */
+        position: absolute;
+        top: 22cm;
+        left: 0mm;
+        padding-top: 1em;
+        border-top: 1px solid black;
+        line-height: 1.2;
+      }
 
-  <!-- 1) Sender’s address (absolute) -->
-  <div class="org-address">
-    ToTac ry<br>
-    Hämeentie 42<br>
-    00100 Helsinki<br>
-    <a href="http://www.organisation.com">www.organisation.com</a>
-  </div>
-
-  <!-- 2) Recipient’s address (absolute) -->
-  <div class="member-address-block">
-    {{ member.first_name }} {{ member.last_name }}<br>
-    {% if member.street_address %}
-      {{ member.street_address }}<br>
-    {% endif %}
-    {{ member.postal_code }} {{ member.city }}
-  </div>
-
-  <!-- 3) Everything below as a “flow” -->
-  <div class="content">
-    <hr class="section-separator">
-
-    <div class="title-block">
-      <h2>Tervetuloa ToTaCin jäseneksi ja mukaan järjestön toimintaan!</h2>
+      a {
+        color: black;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 1) Sender’s address (absolute) -->
+    <div class="org-address">
+      ToTac ry<br />
+      Hämeentie 42<br />
+      00100 Helsinki<br />
+      <a href="http://www.organisation.com">www.organisation.com</a>
     </div>
 
-    <div class="body-block">
-      <p>Lorem ipsum dolor sit amet…</p>
-      <p>Second paragraph…</p>
+    <!-- 2) Recipient’s address (absolute) -->
+    <div class="member-address-block">
+      {{ member.first_name }} {{ member.last_name }}<br />
+      {% if member.street_address %}
+        {{ member.street_address }}<br />
+      {% endif %}
+      {{ member.postal_code }}
+      {{ member.city }}
     </div>
 
-    <hr class="section-separator">
+    <!-- 3) Everything below as a “flow” -->
+    <div class="content">
+      <hr class="section-separator" />
 
-    <div class="payment-block">
-      <strong>ToTaC RY:N JÄSENMAKSU VUODELLE {{ membership.year }}</strong><br><br>
-      VAIHTOEHTO 1: 30 € / VUOSI<br>
-      VAIHTOEHTO 2: 10 € / VUOSI (opiskelijat, työttömät, eläkeläiset)<br><br>
-      Maksetaan tilille <strong>FI36 4730 0010 123450 / ToTac ry</strong><br>
-      Muista merkitä viitenumero: <strong>{{ member.reference_number }}</strong><br><br>
-      <a href="http://www.organisation.com">http://www.organisation.com</a>
+      <div class="title-block">
+        <h2>Tervetuloa ToTaCin jäseneksi ja mukaan järjestön toimintaan!</h2>
+      </div>
+
+      <div class="body-block">
+        ToTacin kamppailu oikeudenmukaisemman maailmantalouden ja
+        tasapuolisemmin vaurautta jakavan globalisaation puolesta on jatkunut jo
+        seitsemäntoista vuotta. Vaikka moni ToTacin keskeisistä tavoitteista –
+        rahoitusmarkkinoiden verotus, veroparatiisien lakkauttaminen,
+        kansainvälinen velkasovittelumekanismi – odottaa yhä toteutumistaan, on
+        pitkäjänteinen työ tuottanut myös tulosta: vielä vuosituhannen
+        vaihteessa utopistisena pidetty ehdotus rahoitusmarkkinaverosta etenee
+        Euroopassa, ja veroparatiisien vahingollisuus valtioiden taloudelle
+        alkaa olla yleisesti tunnustettu tosiseikka. Kasvava eriarvoisuus ja
+        hallituksen jatkuva leikkauspolitiikka kertoo ToTacin vaatimusten
+        ajankohtaisuudesta. Nyt jos koskaan tarvitaan väsymätöntä työtä
+        sosiaalisesti, taloudellisesti ja ekologisesti kestävämpien ja
+        oikeudenmukaisempien vaihtoehtojen esille tuomiseksi! Maailmamme on
+        perustavanlaatuisen muutoksen kynnyksellä, ja meistä riippuu, mihin tuo
+        muutos johtaa. ToTacia tarvitaan enemmän kuin koskaan! Jotta työtä
+        oikeudenmukaisemman maailman puolesta voidaan jatkaa, tarvitaan sekä
+        innokkaasti toimivia ihmisiä että toiminnan mahdollistavia taloudellisia
+        resursseja. Ilman niitä ToTacia ei olisi olemassa, sillä järjestön
+        toiminta perustuu lähes yksinomaan vapaaehtoistyöhön sekä jäsenmaksuista
+        ja lahjoituksista saataviin tuloihin. Kiitos siis myös Sinulle, että
+        olet päättänyt liittyä ToTacin mukana kamppailuun toisenlaisen, paremman
+        maailman puolesta! ToTacin jäsenenä saat paitsi väylän osallistua
+        konkreettiseen toimintaan maailman muuttamiseksi, myös tilaisuuden
+        tutustua mahtaviin ja aktiivisiin ihmisiin ja viisastua yhdessä yhteistä
+        tietämystä jakamalla. Älä siis epäröi ottaa yhteyttä lähipaikkakuntasi
+        paikallisyhteyshenkilöön päästäksesi heti mukaan toimintaan!
+        Paikallisyhteyshenkilöiden yhteystiedot löydät ToTacin verkkosivuilta
+        osoitteesta www.ToTac.fi. Samoilta verkkosivuilta löydät myös lisää
+        tietoa ToTacin historiasta, ajankohtaiset tiedotteet sekä
+        tapahtumakalenterin. Paras keino pysyä tiedotettuna on liittyä ToTacin
+        sähköpostilistoille. Ellet vielä tiedä kuuluvasi ToTacin yleiseen
+        tiedotukseen käytettävälle sähköpostilistalle,
+        ToTac-lista@cool.kaapeli.fi, lähetä sähköpostia osoitteeseen:
+        ToTac@ToTac.fi . Tiedotuslistaa käytetään vain harvoin lähetettävien,
+        kaikkia jäseniä koskevien tiedotusten lähettämiseen. Jos haluat pysyä
+        paremmin kärryillä toiminnasta ja osallistua aktiivisemmin
+        ajankohtaisista aiheista käytäviin keskusteluihin, pyydä päästä myös
+        ToTacin keskustelulistalle, ToTac-keskustelu@cool.kaapeli.fi.
+        Jäsenasioissa tai osoitteesi muuttuessa voit ottaa yhteyttä
+        jäsenrekisteriin lähettämällä sähköpostia osoitteeseen:
+        jasenet@ToTac.fi. Seuraa meitä myös sosiaalisessa mediassa Facebookissa
+        ja Twitterissä.
+
+        <p>
+          ToTacin hallituksen puolesta, <br />
+          <br />
+          John Doe, puheenjohtaja, <br />
+          Tata Tutikainen, puheenjohtaja,<br />
+          Toto Niikanen, puheenjohtaja,
+        </p>
+      </div>
+
+      <div class="payment-block">
+        <strong>ToTaC RY:N JÄSENMAKSU VUODELLE {{ membership.year }}</strong
+        ><br /><br />
+        VAIHTOEHTO 1: 30 € / VUOSI<br />
+        VAIHTOEHTO 2: 10 € / VUOSI (opiskelijat, työttömät, eläkeläiset)<br /><br />
+        Maksetaan tilille <strong>FI36 4730 0010 123450 / ToTac ry</strong
+        ><br />
+        Muista merkitä viitenumero:
+        <strong>{{ member.reference_number }}</strong><br /><br />
+        <a href="http://www.organisation.com">http://www.organisation.com</a>
+      </div>
     </div>
-  </div>
-
-</body>
+  </body>
 </html>
-
