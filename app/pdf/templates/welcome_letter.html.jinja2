@@ -3,166 +3,223 @@
   <head>
     <meta charset="UTF-8" />
     <style>
+      /* ─── Define your spacing scale & typography ───────────────── */
+      :root {
+        /* Page dimensions & margins */
+        --page-size: A4;
+        --page-margin: 1.5cm;
+
+        /* Horizontal & vertical offsets */
+        --horizontal-offset: 0mm; /* left: 0 */
+        --org-address-top: 0mm; /* sender’s address */
+        --member-address-top: 20mm; /* recipient’s block */
+        --content-margin-top: 40mm; /* flow wrapper */
+        --footer-offset: 0mm; /* footer from bottom */
+        --spacing-reset: 0mm;
+
+        /* Typography */
+        --base-font: Helvetica, sans-serif;
+        --body-font-size: 10pt;
+        --font-weight-bold: bold;
+        --title-font-size: 11pt;
+        --line-height: 1.4;
+        --address-line-height: 1.2;
+        --link-accent-color: #003366;
+        --link-decoration: none;
+        --link-hover-decoration: none;
+        --link-underline-offset: 0.1em; /* move underline down by 0.1em */
+
+        /* Separators */
+        --separator-margin: 0mm;
+        --separator-border: 1px solid black;
+
+        /* Padding & section spacing */
+        --title-padding-top: 1em;
+        --body-section-margin-top: 1em;
+        --footer-padding-top: 1em;
+      }
+
       /* ─── Page Setup ───────────────────────────────── */
       @page {
-        size: A4;
-        margin: 1.5cm;
-      }
-      body {
-        margin: 0;
-        font-family: "Helvetica", sans-serif;
-        font-size: 10pt;
-        line-height: 1.4;
-      }
-
-      /* ─── Addresses (absolute) ─────────────────────── */
-      .org-address {
-        position: absolute;
-        top: 0mm;
-        left: 0mm;
-        line-height: 1.2;
-        font-weight: bold;
-      }
-
-      .member-address-block {
-        position: absolute;
-        top: 20mm;
-        left: 0mm;
-        line-height: 1.2;
-      }
-
-      /* ─── Flow Wrapper ─────────────────────────────── */
-      .content {
-        margin-top: 40mm;
-      }
-
-      /* ─── Separator ───────────────────────────────── */
-      .section-separator {
-        border: none;
-        border-top: 1px solid black;
-        margin: 0;
-      }
-
-      /* ─── Title ───────────────────────────────────── */
-      .title-block h2 {
-        font-size: 11pt;
-        margin: 0;
-      }
-
-      /* ─── Body Text ───────────────────────────────── */
-      .body-block {
-        margin-top: 1em;
-        text-align: justify;
-      }
-
-      /* ─── Payment Info ───────────────────────────── */
-      .payment-block {
-        /* margin-top: 3em; */
-        position: absolute;
-        top: 22cm;
-        left: 0mm;
-        padding-top: 1em;
-        border-top: 1px solid black;
-        line-height: 1.2;
+        size: var(--page-size);
+        margin: var(--page-margin);
       }
 
       a {
         color: black;
         text-decoration: none;
       }
+
+      body {
+        margin: var(--spacing-reset);
+        font-family: var(--base-font);
+        font-size: var(--body-font-size);
+        line-height: var(--line-height);
+      }
+
+      /* ─── Links & Emails in body text ────────────────── */
+      .body-block a {
+        color: var(--link-accent-color);
+        text-decoration: var(--link-decoration);
+        text-underline-offset: var(--link-underline-offset);
+      }
+      .body-block a[href^="mailto:"] {
+        text-underline-offset: var(--link-underline-offset);
+      }
+      /* Optional: show underline only on hover in HTML preview */
+      .body-block a:hover {
+        text-decoration: var(--link-hover-decoration);
+      }
+      /* ─── Addresses (absolute) ─────────────────────── */
+      header address {
+        position: absolute;
+        left: var(--horizontal-offset);
+        line-height: var(--address-line-height);
+      }
+      .org-address {
+        top: var(--org-address-top);
+        font-weight: var(--font-weight-bold);
+      }
+      .member-address {
+        top: var(--member-address-top);
+      }
+
+      /* ─── Flow Wrapper ─────────────────────────────── */
+      main.content {
+        margin-top: var(--content-margin-top);
+      }
+
+      /* ─── Separator ───────────────────────────────── */
+      .section-separator {
+        border: none;
+        border-top: var(--separator-border);
+        margin: var(--separator-margin);
+      }
+
+      /* ─── Title & Body ────────────────────────────── */
+      .title-block h2 {
+        padding-top: var(--title-padding-top);
+        font-size: var(--title-font-size);
+        margin: var(--spacing-reset);
+      }
+      .body-block {
+        margin-top: var(--body-section-margin-top);
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      /* ─── Footer / Payment Info ───────────────────── */
+      footer.payment-block {
+        position: absolute;
+        bottom: var(--footer-offset);
+        left: var(--horizontal-offset);
+        padding-top: var(--footer-padding-top);
+        border-top: var(--separator-border);
+        line-height: var(--address-line-height);
+      }
     </style>
   </head>
+
   <body>
-    <!-- 1) Sender’s address (absolute) -->
-    <div class="org-address">
-      ToTac ry<br />
-      Hämeentie 42<br />
-      00100 Helsinki<br />
-      <a href="http://www.organisation.com">www.organisation.com</a>
-    </div>
+    <header>
+      <!-- 1) Sender’s address -->
+      <address class="org-address">
+        ToTac ry<br />
+        Hitchikers' street 42<br />
+        00100 City<br />
+        <a href="http://www.organisation.com">www.organisation.com</a>
+      </address>
 
-    <!-- 2) Recipient’s address (absolute) -->
-    <div class="member-address-block">
-      {{ member.first_name }} {{ member.last_name }}<br />
-      {% if member.street_address %}
-        {{ member.street_address }}<br />
-      {% endif %}
-      {{ member.postal_code }}
-      {{ member.city }}
-    </div>
+      <!-- 2) Recipient’s address -->
+      <address class="member-address">
+        {%- if member.organisation %}
+          {{ member.organisation }}<br />
+        {%- endif %}
+        {{ member.first_name }}
+        {{ member.last_name }}<br />
+        {%- if member.street_address %}
+          {{ member.street_address }}<br />
+        {%- endif %}
+        {{ member.postal_code }}
+        {{ member.city }}
+        {%- if member.country %}
+          {{ member.country }}<br />
+        {%- endif %}
+      </address>
+    </header>
 
-    <!-- 3) Everything below as a “flow” -->
-    <div class="content">
+    <main class="content">
       <hr class="section-separator" />
 
-      <div class="title-block">
-        <h2>Tervetuloa ToTaCin jäseneksi ja mukaan järjestön toimintaan!</h2>
-      </div>
+      <section class="title-block">
+        <h2>Welcome to ToTaC Lorem ipsum dolor sit amet, consectetur!</h2>
+      </section>
 
-      <div class="body-block">
-        ToTacin kamppailu oikeudenmukaisemman maailmantalouden ja
-        tasapuolisemmin vaurautta jakavan globalisaation puolesta on jatkunut jo
-        seitsemäntoista vuotta. Vaikka moni ToTacin keskeisistä tavoitteista –
-        rahoitusmarkkinoiden verotus, veroparatiisien lakkauttaminen,
-        kansainvälinen velkasovittelumekanismi – odottaa yhä toteutumistaan, on
-        pitkäjänteinen työ tuottanut myös tulosta: vielä vuosituhannen
-        vaihteessa utopistisena pidetty ehdotus rahoitusmarkkinaverosta etenee
-        Euroopassa, ja veroparatiisien vahingollisuus valtioiden taloudelle
-        alkaa olla yleisesti tunnustettu tosiseikka. Kasvava eriarvoisuus ja
-        hallituksen jatkuva leikkauspolitiikka kertoo ToTacin vaatimusten
-        ajankohtaisuudesta. Nyt jos koskaan tarvitaan väsymätöntä työtä
-        sosiaalisesti, taloudellisesti ja ekologisesti kestävämpien ja
-        oikeudenmukaisempien vaihtoehtojen esille tuomiseksi! Maailmamme on
-        perustavanlaatuisen muutoksen kynnyksellä, ja meistä riippuu, mihin tuo
-        muutos johtaa. ToTacia tarvitaan enemmän kuin koskaan! Jotta työtä
-        oikeudenmukaisemman maailman puolesta voidaan jatkaa, tarvitaan sekä
-        innokkaasti toimivia ihmisiä että toiminnan mahdollistavia taloudellisia
-        resursseja. Ilman niitä ToTacia ei olisi olemassa, sillä järjestön
-        toiminta perustuu lähes yksinomaan vapaaehtoistyöhön sekä jäsenmaksuista
-        ja lahjoituksista saataviin tuloihin. Kiitos siis myös Sinulle, että
-        olet päättänyt liittyä ToTacin mukana kamppailuun toisenlaisen, paremman
-        maailman puolesta! ToTacin jäsenenä saat paitsi väylän osallistua
-        konkreettiseen toimintaan maailman muuttamiseksi, myös tilaisuuden
-        tutustua mahtaviin ja aktiivisiin ihmisiin ja viisastua yhdessä yhteistä
-        tietämystä jakamalla. Älä siis epäröi ottaa yhteyttä lähipaikkakuntasi
-        paikallisyhteyshenkilöön päästäksesi heti mukaan toimintaan!
-        Paikallisyhteyshenkilöiden yhteystiedot löydät ToTacin verkkosivuilta
-        osoitteesta www.ToTac.fi. Samoilta verkkosivuilta löydät myös lisää
-        tietoa ToTacin historiasta, ajankohtaiset tiedotteet sekä
-        tapahtumakalenterin. Paras keino pysyä tiedotettuna on liittyä ToTacin
-        sähköpostilistoille. Ellet vielä tiedä kuuluvasi ToTacin yleiseen
-        tiedotukseen käytettävälle sähköpostilistalle,
-        ToTac-lista@cool.kaapeli.fi, lähetä sähköpostia osoitteeseen:
-        ToTac@ToTac.fi . Tiedotuslistaa käytetään vain harvoin lähetettävien,
-        kaikkia jäseniä koskevien tiedotusten lähettämiseen. Jos haluat pysyä
-        paremmin kärryillä toiminnasta ja osallistua aktiivisemmin
-        ajankohtaisista aiheista käytäviin keskusteluihin, pyydä päästä myös
-        ToTacin keskustelulistalle, ToTac-keskustelu@cool.kaapeli.fi.
-        Jäsenasioissa tai osoitteesi muuttuessa voit ottaa yhteyttä
-        jäsenrekisteriin lähettämällä sähköpostia osoitteeseen:
-        jasenet@ToTac.fi. Seuraa meitä myös sosiaalisessa mediassa Facebookissa
-        ja Twitterissä.
-
+      <section class="body-block">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a nisl
+        tortor. Etiam bibendum lacinia tincidunt. Etiam pretium nisl non lacinia
+        sagittis. Phasellus sit amet neque blandit, elementum odio in, feugiat
+        neque. Etiam efficitur sem quis est ultrices, sit amet pellentesque
+        magna rhoncus. Nullam id tortor ac nisi dapibus consequat ac non elit.
+        Pellentesque id magna in lacus pulvinar volutpat. Proin in finibus
+        metus. Pellentesque lacus nisl, accumsan quis ornare viverra, ultricies
+        tempor. Curabitur vestibulum, quam at pretium aliquam, sem nulla pretium
+        diam, eu tincidunt ligula arcu interdum neque. Mauris a ultrices nisl.
+        Duis sem dui, rhoncus vitae vehicula nec, molestie ut nisl. Aliquam
+        ultricies et neque quis sollicitudin. Proin rutrum pharetra urna quis
+        feugiat. Sed porta turpis eget blandit vehicula. Cras dolor ex, suscipit
+        id ipsum consequat, eleifend ornare arcu. Aenean dapibus quis dolor vel
+        hendrerit. Duis condimentum euismod dolor vitae tempus. Nulla rutrum
+        arcu sollicitudin nunc sodales, ut pharetra risus dapibus. Donec sed
+        tortor vel ex volutpat suscipit. Class aptent taciti sociosqu ad litora
+        torquent per conubia nostra, per inceptos himenaeos. Praesent eget ante
+        a velit lobortis dictum et aliquam erat. Morbi a feugiat diam, in
+        consequat orci. Etiam vitae interdum odio. Suspendisse suscipit dui ut
+        libero ultrices, eu ornare justo convallis. Curabitur et feugiat quam.
+        Cras fringilla eu sapien quis iaculis. Curabitur in porta velit. In at
+        rhoncus odio. Nullam id purus eu dui posuere lacinia eu vitae dui.
+        Integer non placerat nibh, nec feugiat arcu. Donec ut lacinia ex. Nunc
+        aliquet condimentum accumsan. Vivamus gravida ligula libero, vitae
+        suscipit justo tempor et. Morbi tempor rutrum egestas. Mauris suscipit
+        quam quis varius condimentum. Cras consectetur elementum bibendum. Class
+        aptent taciti sociosqu per inceptos himenaeos. Pellentesque laoreet diam
+        in efficitur iaculis. Nunc sed urna ullamcorper, congue elit vitae,
+        egestas metus. Cras condimentum ipsum a malesuada accumsan. Pellentesque
+        malesuada mauris vitae varius vestibulum. Vivamus pulvinar vehicula
+        quis.
+        <a href="mailto:ToTac-lista@cool.ipsum.fi">ToTac-lista@cool.ipsum.fi</a>
+        Proin rutrum pharetra urna quis feugiat.
+        <a href="mailto:ToTac@ToTac.fi">ToTac@ToTac.fi</a>. aptent taciti
+        sociosqu per inceptos himenaeos. Pellentesque laoreet diam in efficitur
+        iaculis. Nunc sed urna ullamcorper, congue elit vitae, egestas metus.
+        Cras condimentum ipsum a malesuada accumsan. Pellentesque malesuada
+        mauris vitae varius vestibulum. Vivamus pulvinar vehicula
+        <a href="mailto:ToTac-keskustelu@cool.ipsum.fi"
+          >ToTac-keskustelu@cool.ipsum.fi</a
+        >. Class aptent taciti sociosqu ad litora torquent per conubia nostra,
+        per inceptos himenaeos.
+        <a href="mailto:jasenet@ToTac.fi">jasenet@ToTac.fi</a>. Jäsenasioissa .
+        Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        <a href="https://facebook.com/ToTacRy">Facebookissa</a> ja
+        <a href="https://twitter.com/ToTacRy">Twitterissä</a>.
         <p>
-          ToTacin hallituksen puolesta, <br />
+          ToTac's board greetings, <br />
           <br />
-          John Doe, puheenjohtaja, <br />
-          Tata Tutikainen, puheenjohtaja,<br />
-          Toto Niikanen, puheenjohtaja,
+          John Doe, spokeperson, <br />
+          Tata Tutikainen, spokeperson,<br />
+          Toto Niikanen, spokeperson.
         </p>
-      </div>
+      </section>
+    </main>
 
-      <div class="payment-block">
-        <strong>ToTaC RY:N JÄSENMAKSU VUODELLE {{ membership.year }}</strong
-        ><br /><br />
-        VAIHTOEHTO 1: 30 € / VUOSI<br />
-        VAIHTOEHTO 2: 10 € / VUOSI (opiskelijat, työttömät, eläkeläiset)<br /><br />
-        Maksetaan tilille <strong>FI36 4730 0010 123450 / ToTac ry</strong
-        ><br />
-        Muista merkitä viitenumero:
-        <strong>{{ member.reference_number }}</strong><br /><br />
-        <a href="http://www.organisation.com">http://www.organisation.com</a>
-      </div>
-    </div>
+    <footer class="payment-block">
+      <strong>ToTaC RY'S MEMBERSHIP FOR {{ membership.year }}</strong
+      ><br /><br />
+      ALTERNATIVE 1: 30 € / YEAR<br />
+      ALTERNATIVE 2: 10 € / YEAR (student, unemployed, retired)<br /><br />
+      Pay to account <strong>FI36 4730 0010 123450 / ToTac ry</strong><br />
+      Remember to use your reference number:
+      <strong>{{ member.reference_number }}</strong><br /><br />
+    </footer>
   </body>
 </html>
