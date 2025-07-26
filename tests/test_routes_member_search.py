@@ -61,7 +61,7 @@ def test_search_variants(db_session, make_member, subpath, query_value, expected
     db_session.query(Member).delete()
     db_session.commit()
 
-    m = create_member_with_two(db_session, make_member)
+    create_member_with_two(db_session, make_member)
     resp = client.get(f"/members/search/{subpath}/{query_value}")
     assert resp.status_code == 200
     payload = resp.json()
@@ -88,9 +88,9 @@ def test_search_by_postal_code(db_session, make_member):
     db_session.commit()
 
     # Create two members with postal_code="00100", plus one with a different code
-    m1 = make_member(city="A-City", postal_code="00100")
-    m2 = make_member(city="B-City", postal_code="00100")
-    _ = make_member(city="C-City", postal_code="99999")
+    make_member(city="A-City", postal_code="00100")
+    make_member(city="B-City", postal_code="00100")
+    make_member(city="C-City", postal_code="99999")
 
     resp = client.get("/members/search/postal/00100")
     assert resp.status_code == 200
