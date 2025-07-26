@@ -1,32 +1,225 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome Letter</title>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8" />
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
-            line-height: 1.6;
-        }
+      /* ─── Define your spacing scale & typography ───────────────── */
+      :root {
+        /* Page dimensions & margins */
+        --page-size: A4;
+        --page-margin: 1.5cm;
+
+        /* Horizontal & vertical offsets */
+        --horizontal-offset: 0mm; /* left: 0 */
+        --org-address-top: 0mm; /* sender’s address */
+        --member-address-top: 20mm; /* recipient’s block */
+        --content-margin-top: 40mm; /* flow wrapper */
+        --footer-offset: 0mm; /* footer from bottom */
+        --spacing-reset: 0mm;
+
+        /* Typography */
+        --base-font: Helvetica, sans-serif;
+        --body-font-size: 10pt;
+        --font-weight-bold: bold;
+        --title-font-size: 11pt;
+        --line-height: 1.4;
+        --address-line-height: 1.2;
+        --link-accent-color: #003366;
+        --link-decoration: none;
+        --link-hover-decoration: none;
+        --link-underline-offset: 0.1em; /* move underline down by 0.1em */
+
+        /* Separators */
+        --separator-margin: 0mm;
+        --separator-border: 1px solid black;
+
+        /* Padding & section spacing */
+        --title-padding-top: 1em;
+        --body-section-margin-top: 1em;
+        --footer-padding-top: 1em;
+      }
+
+      /* ─── Page Setup ───────────────────────────────── */
+      @page {
+        size: var(--page-size);
+        margin: var(--page-margin);
+      }
+
+      a {
+        color: black;
+        text-decoration: none;
+      }
+
+      body {
+        margin: var(--spacing-reset);
+        font-family: var(--base-font);
+        font-size: var(--body-font-size);
+        line-height: var(--line-height);
+      }
+
+      /* ─── Links & Emails in body text ────────────────── */
+      .body-block a {
+        color: var(--link-accent-color);
+        text-decoration: var(--link-decoration);
+        text-underline-offset: var(--link-underline-offset);
+      }
+      .body-block a[href^="mailto:"] {
+        text-underline-offset: var(--link-underline-offset);
+      }
+      /* Optional: show underline only on hover in HTML preview */
+      .body-block a:hover {
+        text-decoration: var(--link-hover-decoration);
+      }
+      /* ─── Addresses (absolute) ─────────────────────── */
+      header address {
+        position: absolute;
+        left: var(--horizontal-offset);
+        line-height: var(--address-line-height);
+      }
+      .org-address {
+        top: var(--org-address-top);
+        font-weight: var(--font-weight-bold);
+      }
+      .member-address {
+        top: var(--member-address-top);
+      }
+
+      /* ─── Flow Wrapper ─────────────────────────────── */
+      main.content {
+        margin-top: var(--content-margin-top);
+      }
+
+      /* ─── Separator ───────────────────────────────── */
+      .section-separator {
+        border: none;
+        border-top: var(--separator-border);
+        margin: var(--separator-margin);
+      }
+
+      /* ─── Title & Body ────────────────────────────── */
+      .title-block h2 {
+        padding-top: var(--title-padding-top);
+        font-size: var(--title-font-size);
+        margin: var(--spacing-reset);
+      }
+      .body-block {
+        margin-top: var(--body-section-margin-top);
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      /* ─── Footer / Payment Info ───────────────────── */
+      footer.payment-block {
+        position: absolute;
+        bottom: var(--footer-offset);
+        left: var(--horizontal-offset);
+        padding-top: var(--footer-padding-top);
+        border-top: var(--separator-border);
+        line-height: var(--address-line-height);
+      }
     </style>
-</head>
-<body>
-    <p>Dear {{ member.first_name }} {{ member.last_name }},</p>
+  </head>
 
-    <p>Welcome to our association! We're glad to have you as a member for the year {{ membership.year }}.</p>
+  <body>
+    <header>
+      <!-- 1) Sender’s address -->
+      <address class="org-address">
+        ToTac ry<br />
+        Hitchikers' street 42<br />
+        00100 City<br />
+        <a href="http://www.organisation.com">www.organisation.com</a>
+      </address>
 
-    <p>Your reference number is: <strong>{{ member.reference_number }}</strong></p>
+      <!-- 2) Recipient’s address -->
+      <address class="member-address">
+        {%- if member.organisation %}
+          {{ member.organisation }}<br />
+        {%- endif %}
+        {{ member.first_name }}
+        {{ member.last_name }}<br />
+        {%- if member.street_address %}
+          {{ member.street_address }}<br />
+        {%- endif %}
+        {{ member.postal_code }}
+        {{ member.city }}
+        {%- if member.country %}
+          {{ member.country }}<br />
+        {%- endif %}
+      </address>
+    </header>
 
-    <p>
-        The membership fee is €25.
-        If you haven't paid yet, please use your reference number when making the payment.
-    </p>
+    <main class="content">
+      <hr class="section-separator" />
 
-    <p>Thank you for your support!</p>
+      <section class="title-block">
+        <h2>Welcome to ToTaC Lorem ipsum dolor sit amet, consectetur!</h2>
+      </section>
 
-    <p>Kind regards,<br>
-    The Membership Team</p>
-</body>
+      <section class="body-block">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a nisl
+        tortor. Etiam bibendum lacinia tincidunt. Etiam pretium nisl non lacinia
+        sagittis. Phasellus sit amet neque blandit, elementum odio in, feugiat
+        neque. Etiam efficitur sem quis est ultrices, sit amet pellentesque
+        magna rhoncus. Nullam id tortor ac nisi dapibus consequat ac non elit.
+        Pellentesque id magna in lacus pulvinar volutpat. Proin in finibus
+        metus. Pellentesque lacus nisl, accumsan quis ornare viverra, ultricies
+        tempor. Curabitur vestibulum, quam at pretium aliquam, sem nulla pretium
+        diam, eu tincidunt ligula arcu interdum neque. Mauris a ultrices nisl.
+        Duis sem dui, rhoncus vitae vehicula nec, molestie ut nisl. Aliquam
+        ultricies et neque quis sollicitudin. Proin rutrum pharetra urna quis
+        feugiat. Sed porta turpis eget blandit vehicula. Cras dolor ex, suscipit
+        id ipsum consequat, eleifend ornare arcu. Aenean dapibus quis dolor vel
+        hendrerit. Duis condimentum euismod dolor vitae tempus. Nulla rutrum
+        arcu sollicitudin nunc sodales, ut pharetra risus dapibus. Donec sed
+        tortor vel ex volutpat suscipit. Class aptent taciti sociosqu ad litora
+        torquent per conubia nostra, per inceptos himenaeos. Praesent eget ante
+        a velit lobortis dictum et aliquam erat. Morbi a feugiat diam, in
+        consequat orci. Etiam vitae interdum odio. Suspendisse suscipit dui ut
+        libero ultrices, eu ornare justo convallis. Curabitur et feugiat quam.
+        Cras fringilla eu sapien quis iaculis. Curabitur in porta velit. In at
+        rhoncus odio. Nullam id purus eu dui posuere lacinia eu vitae dui.
+        Integer non placerat nibh, nec feugiat arcu. Donec ut lacinia ex. Nunc
+        aliquet condimentum accumsan. Vivamus gravida ligula libero, vitae
+        suscipit justo tempor et. Morbi tempor rutrum egestas. Mauris suscipit
+        quam quis varius condimentum. Cras consectetur elementum bibendum. Class
+        aptent taciti sociosqu per inceptos himenaeos. Pellentesque laoreet diam
+        in efficitur iaculis. Nunc sed urna ullamcorper, congue elit vitae,
+        egestas metus. Cras condimentum ipsum a malesuada accumsan. Pellentesque
+        malesuada mauris vitae varius vestibulum. Vivamus pulvinar vehicula
+        quis.
+        <a href="mailto:ToTac-lista@cool.ipsum.fi">ToTac-lista@cool.ipsum.fi</a>
+        Proin rutrum pharetra urna quis feugiat.
+        <a href="mailto:ToTac@ToTac.fi">ToTac@ToTac.fi</a>. aptent taciti
+        sociosqu per inceptos himenaeos. Pellentesque laoreet diam in efficitur
+        iaculis. Nunc sed urna ullamcorper, congue elit vitae, egestas metus.
+        Cras condimentum ipsum a malesuada accumsan. Pellentesque malesuada
+        mauris vitae varius vestibulum. Vivamus pulvinar vehicula
+        <a href="mailto:ToTac-keskustelu@cool.ipsum.fi"
+          >ToTac-keskustelu@cool.ipsum.fi</a
+        >. Class aptent taciti sociosqu ad litora torquent per conubia nostra,
+        per inceptos himenaeos.
+        <a href="mailto:jasenet@ToTac.fi">jasenet@ToTac.fi</a>. Jäsenasioissa .
+        Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        <a href="https://facebook.com/ToTacRy">Facebookissa</a> ja
+        <a href="https://twitter.com/ToTacRy">Twitterissä</a>.
+        <p>
+          ToTac's board greetings, <br />
+          <br />
+          John Doe, spokeperson, <br />
+          Tata Tutikainen, spokeperson,<br />
+          Toto Niikanen, spokeperson.
+        </p>
+      </section>
+    </main>
+
+    <footer class="payment-block">
+      <strong>ToTaC RY'S MEMBERSHIP FOR {{ membership.year }}</strong
+      ><br /><br />
+      ALTERNATIVE 1: 30 € / YEAR<br />
+      ALTERNATIVE 2: 10 € / YEAR (student, unemployed, retired)<br /><br />
+      Pay to account <strong>FI36 4730 0010 123450 / ToTac ry</strong><br />
+      Remember to use your reference number:
+      <strong>{{ member.reference_number }}</strong><br /><br />
+    </footer>
+  </body>
 </html>
-

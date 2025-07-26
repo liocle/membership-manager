@@ -4,8 +4,8 @@ import os
 os.environ["ENV_FILE"] = ".env.test"
 
 import uuid
+
 import pytest
-from config import settings
 from models import Member
 
 import tests.setup_test_db  # noqa: F401
@@ -45,7 +45,7 @@ def make_member(db_session):
         data = {
             "first_name": "Test",
             "last_name": "User",
-            "email": f"test_{uuid.uuid4().hex}@example.test",
+            "email": f"test_{uuid.uuid4().hex}@example.com",
         }
         data.update(overrides)
 

@@ -212,6 +212,9 @@ create_db:
 seed_db:
 	docker compose exec api python seed/seed_data.py
 
+generate_letters:
+	docker compose exec api python scripts/generate_letters.py
+
 alembic_generate_migration:
 	@read -p "Enter migration message: " keyword; docker compose exec api alembic revision --autogenerate -m "$$keyword"
 
@@ -333,8 +336,9 @@ help:
 	@echo "  pytest_local    Run pytest on the local machine (requires local PostgreSQL service)"
 	@echo ""
 	@echo "Tools and utilities:"
-	@echo "  create_db      runs the create_tables.py script to create the database tables"
-	@echo "  seed_db        Seed the database with sample data"
+	@echo "  create_db      				 runs the create_tables.py script to create the database tables"
+	@echo "  seed_db        				 Seed the database with sample data"
+	@echo "  generate_letters 				 Generate letters for members"
 	@echo "  alembic_generate_migration      Generate a new migration with alembic"
 	@echo "  alembic_upgrade_head            Upgrade to the latest migration"
 	@echo "  alembic_history                 Show the migration history"
