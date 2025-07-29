@@ -112,3 +112,13 @@ services:
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: ${APP_NAME}_prom_promtail
+    volumes:
+      - /mnt/archive_lionel/archive/____DOCKER-DATA____/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail-config.yml:/etc/promtail/promtail.yml
+    command: -config.file=/etc/promtail/promtail.yml
+    depends_on:
+      - loki
