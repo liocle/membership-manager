@@ -3,6 +3,9 @@ volumes:
   postgres_data:
     driver: local
     name: MemberMGR_Volume
+  grafana_data:
+    driver: local
+    name: MemberMGR_Grafana_Volume
 
 networks:
   default:
@@ -43,7 +46,7 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     ports:
       - "${API_PORT}:8000"
-    volumes:  # Temporary volumes for development
+    volumes:
       - ./app/seed:/app/seed
       - ./app/pdf/templates:/app/pdf/templates
       - ./output:/app/output
@@ -53,7 +56,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: ${APP_NAME}_pgadmin
+    container_name: ${APP_NAME}_prom_pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
@@ -64,3 +67,48 @@ services:
       postgres:
         condition: service_healthy
 
+  prometheus:
+    image: prom/prometheus
+    container_name: ${APP_NAME}_prom_prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    container_name: ${APP_NAME}_prom_grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring/dashboards:/etc/grafana/dashboards
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: ${APP_NAME}_prom_loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: ${APP_NAME}_prom_postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: ${APP_NAME}_prom_cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
