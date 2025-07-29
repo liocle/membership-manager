@@ -139,6 +139,15 @@ membership-manager/
 - `make help`           – display full command list
 ---
 
+## 📄 Sample Welcome Letter
+
+Below is an example of the PDF letter generated
+
+<img width="1241" height="1754" alt="sample-letter-1" src="https://github.com/user-attachments/assets/148395f8-22cd-4208-b068-5a8968426a25" />
+
+---
+
+
 ## 📄 License
 
 MIT © 2025 Lionel Clerc
