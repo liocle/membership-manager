@@ -24,7 +24,6 @@ MarkupSafe==3.0.2
 mirakuru==2.6.0
 msgpack==1.1.0
 mypy_extensions==1.1.0
-neovim==0.3.1
 packaging==24.2
 pathspec==0.12.1
 pillow==11.3.0
@@ -60,3 +59,4 @@ uvicorn==0.34.0
 weasyprint==65.1
 webencodings==0.5.1
 zopfli==0.2.3.post1
+

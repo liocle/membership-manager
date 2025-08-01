@@ -1,3 +1,6 @@
+---
+# monitoring/loki/loki-local-config.yml
+
 auth_enabled: false
 
 server:

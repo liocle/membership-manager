@@ -10,6 +10,7 @@ volumes:
 networks:
   default:
     name: ${APP_NETWORK}
+    driver: bridge
   monitoring:
     name: ${APP_NETWORK}_monitoring
     driver: bridge
@@ -127,7 +128,7 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:3100/ready"]
+      test: ["CMD-SHELL", "wget --spider http://localhost:3100/ready || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -146,7 +147,10 @@ services:
       - postgres
     healthcheck:
       test:
-        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:9187/metrics || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -165,7 +169,11 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/healthz"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:8080/healthz || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -184,15 +192,36 @@ services:
     command: -config.file=/etc/promtail/promtail.yml
     depends_on:
       - loki
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: ${APP_NAME}_prom_node_exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)"
+    networks:
+      - monitoring
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:9080/ready"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:9100/metrics || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
 
   alertmanager:
     image: prom/alertmanager:latest
-    container_name: alertmanager
+    container_name: ${APP_NAME}_prom_alertmanager
     volumes:
       - ./monitoring/alertmanager:/etc/alertmanager
     command:
