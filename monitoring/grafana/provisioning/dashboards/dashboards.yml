@@ -1,4 +1,5 @@
 ---
+# monitoring/grafana/provisioning/dashboards/dashboards.yml
 apiVersion: 1
 
 providers:
@@ -8,4 +9,4 @@ providers:
     disableDeletion: false
     editable: true
     options:
-      path: /etc/grafana/dashboards
+      path: /var/lib/grafana/dashboards
