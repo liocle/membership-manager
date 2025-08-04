@@ -1,0 +1,11 @@
+---
+# monitoring/alertmanager/config.yml
+
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "null"
+
+receivers:
+  - name: "null"
