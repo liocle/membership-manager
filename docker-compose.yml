@@ -235,3 +235,12 @@ services:
     ports:
       - "9093:9093"
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --spider -q http://localhost:9093/-/healthy || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
