@@ -204,6 +204,16 @@ pytest_local:
 	    --cov-report=html \
 	    tests/
 
+# Run only monitoring-related pytest (assumes stack is already up)
+pytest_monitoring:
+	env ENV_FILE=.env.test \
+		ONLY_MONITORING_TESTS=1 \
+		pytest -v tests/monitoring/test_monitoring_alerts.py
+
+# Run both main test suite and monitoring tests
+pytest_all:
+	$(MAKE) pytest_local
+	$(MAKE) pytest_monitoring
 
 ################################################################################
 # Tools and Utilities

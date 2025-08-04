@@ -30,3 +30,12 @@ groups:
         annotations:
           summary: "Container CPU throttling ({{ $labels.name }})"
           description: "Container {{ $labels.name }} is being throttled {{ $value | humanizePercentage }}"
+
+      - alert: AlwaysFiring
+        expr: vector(1)
+        for: 5s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Test alert"
+          description: "This alert always fires"
