@@ -82,6 +82,10 @@ clean: clean_orphans clean_volumes
 # Rebuild and start all services without removing volumes
 re: clean_orphans up_no_elk
 
+re_monitoring: clean_orphans
+	docker compose -f ./docker-compose.yml build --no-cache
+	$(MAKE) up_all
+
 # Rebuild and start all services: clean orphans and volumes, keep images
 re_rm_volumes: clean_orphans clean_volumes up_no_elk
 
@@ -200,6 +204,16 @@ pytest_local:
 	    --cov-report=html \
 	    tests/
 
+# Run only monitoring-related pytest (assumes stack is already up)
+pytest_monitoring:
+	env ENV_FILE=.env.test \
+		ONLY_MONITORING_TESTS=1 \
+		pytest -v tests/monitoring/test_monitoring_alerts.py
+
+# Run both main test suite and monitoring tests
+pytest_all:
+	$(MAKE) pytest_local
+	$(MAKE) pytest_monitoring
 
 ################################################################################
 # Tools and Utilities
@@ -304,6 +318,7 @@ help:
 	@echo ""
 	@echo "Rebuild and Restart:"
 	@echo "  re             Restart services after cleaning orphans, keeping data"
+	@echo "  re_monitoring  Restart services after cleaning orphans, keeping data, and rebuild including monitoring services"
 	@echo "  re_no_cache    Force full rebuild from scratch (no cache, fresh layers)"
 	@echo "  re_rm_volumes  Restart services after removing ALL volumes (fresh DB)"
 	@echo "  re_rm_volumes_cache   Restart services after removing ALL volumes and cache"

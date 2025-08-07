@@ -1,0 +1,35 @@
+---
+# monitoring/promtail-config.yml
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: docker
+          __path__: /var/lib/docker/containers/*/*-json.log
+
+    pipeline_stages:
+      - docker: {}
+
+      - json:
+          expressions:
+            level:
+            msg:
+
+      - regex:
+          expression: 'method=(?P<method>\w+)\spath=(?P<path>/\S+)\sstatus=(?P<status>-?\d+)\s.*duration=(?P<duration>[\d\.]+)ms'
+
+      - labels:
+          level: ""
+          path: ""
+          method: ""
+          status: ""
+          duration: ""

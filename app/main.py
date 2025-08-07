@@ -11,6 +11,7 @@ from api.routes_member import router as member_router
 from api.routes_membership import router as membership_router
 from api.routes_misc import router as misc_router
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(
     title="Membership Manager API",
@@ -18,6 +19,8 @@ app = FastAPI(
     version="0.0.1",
     contact={"name": "Lionel", "email": "email@toto.com"},
 )
+
+Instrumentator().instrument(app).expose(app)
 
 
 @app.get("/")

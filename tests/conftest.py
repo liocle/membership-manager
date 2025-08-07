@@ -8,9 +8,12 @@ import uuid
 import pytest
 from models import Member
 
-import tests.setup_test_db  # noqa: F401
+IS_MONITORING_TEST = os.environ.get("ONLY_MONITORING_TESTS") == "1"
 
-_ = tests.setup_test_db  # Prevent ruff from removing the import
+if not IS_MONITORING_TEST:
+    import tests.setup_test_db  # noqa: F401
+
+    _ = tests.setup_test_db  # noqa: F401
 
 
 @pytest.fixture(scope="session", autouse=True)
