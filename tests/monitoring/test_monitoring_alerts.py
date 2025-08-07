@@ -1,14 +1,21 @@
 # .tests/test_monitoring_alerts.py
 
 
-import pytest
+import os
 import time
+
+import pytest
 import requests
+
+skip_if_ci = pytest.mark.skipif(
+    os.getenv("CI") == "true", reason="Monitoring stack not running in GitHub Actions"
+)
 
 PROM_URL = "http://localhost:9090"
 ALERTMANAGER_URL = "http://localhost:9093"
 
 
+@skip_if_ci
 @pytest.mark.monitoring
 def test_alertmanager_health():
     """Ensure Alertmanager is running and healthy"""
@@ -16,6 +23,7 @@ def test_alertmanager_health():
     assert resp.status_code == 200
 
 
+@skip_if_ci
 @pytest.mark.monitoring
 def test_prometheus_rules_loaded():
     """Verify that container_alerts rule group is loaded"""
@@ -25,6 +33,7 @@ def test_prometheus_rules_loaded():
     assert any(group["name"] == "container_alerts" for group in groups)
 
 
+@skip_if_ci
 @pytest.mark.monitoring
 def test_alert_firing_pipeline():
     """

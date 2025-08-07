@@ -17,15 +17,41 @@ A containerized FastAPI application for managing members and yearly memberships,
 
 ## 🛠 Tech Stack
 
-- Python 3.11
-- FastAPI (HTTP API)
-- SQLAlchemy + Alembic (ORM & migrations)
-- Pydantic (settings & schemas)
-- PostgreSQL
-- Docker & Docker Compose 
-- Make
-- GitHub Actions (CI)
-- WeasyPrint & Jinja2 (PDF generation)
+### - Core Backend
+
+- **Python 3.11**
+- **FastAPI** – RESTful API framework
+- **SQLAlchemy + Alembic** – ORM and schema migrations
+- **Pydantic** – Data validation and configuration management
+
+### - Database
+
+- **PostgreSQL 16** – Relational database
+- **pgAdmin** – GUI for PostgreSQL administration
+
+### - PDF Generation
+
+- **WeasyPrint** – HTML/CSS to PDF rendering engine
+- **Jinja2** – Templating for personalized letters
+
+### - Infrastructure & Tooling
+
+- **Docker & Docker Compose** – Containerized services
+- **Make** – Task automation and local developer tooling
+
+### - Testing & Automation
+
+- **Pytest** – Unit and integration testing
+- **GitHub Actions** – CI pipeline (linting, tests, coverage)
+- **Ruff + Black** – Linting and formatting
+
+### - Observability & Monitoring
+
+- **Prometheus** – Metrics collection
+- **Grafana** – Dashboarding and visualization
+- **Loki + Promtail** – Centralized structured logging
+- **cAdvisor** – Container-level resource monitoring
+- **Alertmanager** – Rule-based alerting
 
 ---
 
@@ -119,6 +145,23 @@ membership-manager/
 │     ├─ generate_welcome_letter.py
 │     └─ templates/
 │        └─ welcome_letter.html.jinja2
+├─ monitoring/
+│  ├─ alertmanager/config.yml
+│  ├─ Container_Host_Monitoring_cAdvisor.jpeg
+│  ├─ grafana/
+│  │  ├─ dashboards/
+│  │  │  └─ docker_metrics_grafana_cadvisor.json
+│  │  └─ provisioning/
+│  │     ├─ dashboards/dashboards.yml
+│  │     └─ datasources/datasource.yml
+│  ├─ loki/loki-local-config.yml
+│  ├─ monitoring_README.md
+│  ├─ PostgreSQL.jpeg
+│  ├─ Prometheus.jpeg
+│  ├─ Prom_FastAPI.jpeg
+│  ├─ prometheus/prometheus.yml
+│  ├─ prometheus/rules/container_alerts.yml
+│  └─ promtail-config.yml
 ├─ output/
 │  └─ letters/      # Generated PDF files (gitignored)
 ├─ tests/           # pytest suite
@@ -137,17 +180,37 @@ membership-manager/
 - `make create_db`      – run DB init script
 - `make seed_db`        – seed sample data
 - `make help`           – display full command list
+
 ---
 
 ## 📄 Sample Welcome Letter
-
-Below is an example of the PDF letter generated
 
 <img width="1241" height="1754" alt="sample-letter-1" src="https://github.com/user-attachments/assets/148395f8-22cd-4208-b068-5a8968426a25" />
 
 ---
 
+## 📊 Observability & Monitoring
+
+This project provisions a complete observability stack with a single command:
+
+```bash
+make up_all
+```
+
+All services (Prometheus, Grafana, Loki, cAdvisor, etc.) are orchestrated via Docker Compose and automatically configured. On launch, Grafana loads a **prebuilt dashboard** to display real-time container metrics such as:
+
+- CPU, memory, and network usage
+- Disk I/O and container health
+
+📁 For screenshots and config details, see [`monitoring/`](./monitoring/) and [monitoring_README.md](./monitoring/monitoring_README.md).
+
+### 🔍 Example Grafana Dashboard
+
+![Container Metrics in Grafana](./monitoring/Container_Host_Monitoring_cAdvisor.jpeg)
+
+---
 
 ## 📄 License
 
 MIT © 2025 Lionel Clerc
+

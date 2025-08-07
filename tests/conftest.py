@@ -8,7 +8,6 @@ import uuid
 import pytest
 from models import Member
 
-
 IS_MONITORING_TEST = os.environ.get("ONLY_MONITORING_TESTS") == "1"
 
 if not IS_MONITORING_TEST:
