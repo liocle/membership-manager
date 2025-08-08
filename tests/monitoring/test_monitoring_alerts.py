@@ -1,6 +1,5 @@
 # .tests/test_monitoring_alerts.py
 
-
 import os
 import time
 
