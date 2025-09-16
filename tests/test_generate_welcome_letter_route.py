@@ -47,19 +47,27 @@ def create_member_with_membership(db: Session) -> Member:
     return member
 
 
+# TODO: keep ID (as in member.id) as internal DB primary key, expose to public only the reference_number
+
+
 def test_generate_welcome_letter_success(db_session):
     member = create_member_with_membership(db_session)
-    response = client.post(f"/members/members/{member.id}/generate_welcome_letter")
+    print(f"[TEST DEBUG] Created member.reference_number={member.reference_number}")
+    response = client.post(f"/members/{member.id}/generate_welcome_letter")
 
     assert response.status_code == 200
     assert "PDF generated successfully" in response.json()["message"]
     output_path = Path(response.json()["path"])
+    print(f"[TEST DEBUG] API returned output_path={output_path}")
+
     assert output_path.exists()
-    assert output_path.suffix == ".pdf"
+    expected_path = Path(f"output/letters/welcome_letter_{member.reference_number}.pdf")
+    print(f"[TEST DEBUG] Expected path={expected_path}")
+    assert output_path == expected_path
 
 
 def test_generate_letter_member_not_found():
-    response = client.post("/members/members/999999/generate_welcome_letter")
+    response = client.post("/members/999999/generate_welcome_letter")
     assert response.status_code == 404
     assert "Member not found" in response.text
 
@@ -78,7 +86,7 @@ def test_generate_letter_member_has_no_membership(db_session):
     db_session.commit()
     db_session.refresh(member)
 
-    response = client.post(f"/members/members/{member.id}/generate_welcome_letter")
+    response = client.post(f"/members/{member.id}/generate_welcome_letter")
 
     assert response.status_code == 400
     assert "no memberships" in response.text

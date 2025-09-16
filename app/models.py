@@ -18,7 +18,7 @@ from sqlalchemy import (
     event,
     func,
 )
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 # Define the sequence for reference_number, starting at 2_000_000_000
 reference_number_seq = Sequence("reference_number_seq", start=2000000000, increment=1)
@@ -73,12 +73,14 @@ class Member(Base):
 class Membership(Base):
     __tablename__ = "memberships"
 
-    id = Column(BigInteger, primary_key=True, index=True)
-    member_id = Column(BigInteger, ForeignKey("members.id"), nullable=False, index=True)
-    year = Column(Integer, index=True)
-    amount = Column(Integer, nullable=False)
-    is_paid = Column(Boolean, default=False)
-    discounted = Column(Boolean, default=False)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    member_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("members.id"), nullable=False, index=True
+    )
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    is_paid: Mapped[bool] = mapped_column(Boolean, default=False)
+    discounted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     member = relationship("Member", back_populates="memberships")
 

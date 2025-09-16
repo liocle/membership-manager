@@ -207,7 +207,7 @@ pytest_local:
 # Run only monitoring-related pytest (assumes stack is already up)
 pytest_monitoring:
 	env ENV_FILE=.env.test \
-		ONLY_MONITORING_TESTS=1 \
+		IS_MONITORING_TEST=1 \
 		pytest -v tests/monitoring/test_monitoring_alerts.py
 
 # Run both main test suite and monitoring tests

@@ -12,19 +12,21 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from models import Member, Membership
 from pdf.generate_welcome_letter import generate_pdf
-from schemas import MemberCreate, MemberResponse, MemberUpdate
+from schemas import MemberCreate, MemberResponse, MemberUpdate, MemberWithMessage
 from sqlalchemy.orm import Session
+from typing import Optional
+from sqlalchemy import or_
 
 router = APIRouter(prefix="/members", tags=["members"])
 
 
 @router.get("/search/{reference_number}")
-def get_member_by_reference(reference_number: str, db: Session = Depends(get_db)):
+def get_member_by_reference(reference_number: int, db: Session = Depends(get_db)):
     """
     Fetch a member and their memberships by reference number.
 
     Args:
-        reference_number (str): Unique reference number of the member.
+        reference_number (int): Unique reference number of the member.
         db (Session): SQLAlchemy DB session (injected).
 
     Returns:
@@ -36,12 +38,9 @@ def get_member_by_reference(reference_number: str, db: Session = Depends(get_db)
     member = (
         db.query(Member).filter(Member.reference_number == reference_number).first()
     )
-
     if not member:
         raise HTTPException(status_code=404, detail="Member not found")
-
     memberships = db.query(Membership).filter(Membership.member_id == member.id).all()
-
     return JSONResponse(
         status_code=200,
         content={
@@ -161,8 +160,15 @@ def search_by_postal(postal_code: str, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/search/reference/{reference_number}")
-def search_by_reference(reference_number: str, db: Session = Depends(get_db)):
+@router.get(
+    "/search/reference/{reference_number}",
+    response_model=MemberWithMessage,
+    status_code=status.HTTP_200_OK,
+)
+def search_by_reference(
+    reference_number: int,
+    db: Session = Depends(get_db),
+):
     """
     Search a member by reference number (exact match).
 
@@ -172,18 +178,24 @@ def search_by_reference(reference_number: str, db: Session = Depends(get_db)):
     Returns:
         dict or HTTPException: The matched member or 404.
     """
+
+    #     reference_number = int(reference_number)
+    # except ValueError:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Reference number must be an integer",
+    #     )
     member = (
         db.query(Member).filter(Member.reference_number == reference_number).first()
     )
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
-    return JSONResponse(
-        status_code=200,
-        content={
-            "message": f"Member with reference number {reference_number} found.",
-            "member": MemberResponse.model_validate(member).model_dump(),
-        },
-    )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
+    return {
+        "message": f"Member with reference number {reference_number} found.",
+        "member": member,
+    }
 
 
 @router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
@@ -280,7 +292,7 @@ def register_new_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     )
 
 
-@router.delete("/members/{member_id}", status_code=200)
+@router.delete("/{member_id}", status_code=200)
 def delete_member(member_id: int, db: Session = Depends(get_db)) -> dict:
     """
     Delete a member by ID and return a confirmation message.
@@ -305,7 +317,7 @@ def delete_member(member_id: int, db: Session = Depends(get_db)) -> dict:
     return {"message": f"Member with ID {member_id} was deleted successfully."}
 
 
-@router.post("/members/{member_id}/generate_welcome_letter")
+@router.post("/{member_id}/generate_welcome_letter")
 def generate_letter(member_id: int, db: Session = Depends(get_db)):
     """
     Generate and save a PDF welcome letter for a given member.
@@ -325,6 +337,75 @@ def generate_letter(member_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Member has no memberships")
 
     membership = sorted(member.memberships, key=lambda m: m.year, reverse=True)[0]
+
+    try:
+        filepath = generate_pdf(member, membership, output_dir=Path("output/letters"))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {e}")
+
+    return {"message": "PDF generated successfully", "path": str(filepath)}
+
+
+@router.get("/", tags=["members"])
+def list_members(
+    q: Optional[str] = None,
+    city: Optional[str] = None,
+    postal_code: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0,
+    db: Session = Depends(get_db),
+):
+    """
+    List members with basic filtering & pagination.
+    """
+    query = db.query(Member)
+
+    if q:
+        like = f"%{q}%"
+        query = query.filter(
+            or_(Member.full_name.ilike(like), Member.email.ilike(like))
+        )
+    if city:
+        query = query.filter(Member.city.ilike(f"%{city}%"))
+    if postal_code:
+        query = query.filter(Member.postal_code == postal_code)
+
+    total = query.count()
+    rows = query.order_by(Member.id.desc()).offset(offset).limit(limit).all()
+
+    items = [
+        MemberResponse.model_validate(m).model_dump() for m in rows
+    ]  # uses existing schema
+    return {"items": items, "total": total}
+
+
+@router.post("/{member_id}/letters")
+def generate_welcome_letter(member_id: int, db: Session = Depends(get_db)):
+    """
+    Generate a welcome letter PDF for the *current year*.
+    If the member has no membership for the current year, use an in-memory
+    (non-persisted) membership with amount=0.
+    """
+    member = db.query(Member).filter(Member.id == member_id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    current_year = datetime.now().year
+    membership = (
+        db.query(Membership)
+        .filter(Membership.member_id == member_id, Membership.year == current_year)
+        .first()
+    )
+
+    if not membership:
+        # Build a transient Membership object (do not add/commit)
+        membership = Membership(
+            member_id=member_id,
+            year=current_year,
+            amount=0,
+            is_paid=False,
+            discounted=False,
+        )
 
     try:
         filepath = generate_pdf(member, membership, output_dir=Path("output/letters"))

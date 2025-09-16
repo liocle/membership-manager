@@ -78,7 +78,7 @@ class MemberUpdate(BaseModel):
 class MemberResponse(MemberBase):
     id: int
     reference_number: int
-    memberships: List[MembershipResponse] = []
+    memberships: List[MembershipResponse] = Field(default_factory=list)
 
     model_config = {
         "from_attributes": True,
@@ -99,6 +99,11 @@ class MemberResponse(MemberBase):
             }
         },
     }
+
+
+class MemberWithMessage(BaseModel):
+    message: str
+    member: MemberResponse
 
 
 class MembershipCreate(BaseModel):

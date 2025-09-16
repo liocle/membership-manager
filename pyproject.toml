@@ -8,7 +8,7 @@ lint.extend-select = ["I"]  # Import cleanup
 fix = true
 
 [tool.pytest.ini_options]
-addopts = "-ra -q"
+addopts = "-ra -q -m 'not monitoring'"
 testpaths = ["tests"]
 markers = ["monitoring: Marks tests related to the observability stack"]
 
