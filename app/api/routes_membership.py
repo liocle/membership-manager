@@ -11,6 +11,9 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/members", tags=["members"])
 
 
+# TODO Change all HTTP responses to use status codes
+
+
 @router.post(
     "/{member_id}/memberships",
     response_model=MembershipResponse,
@@ -31,7 +34,9 @@ def create_membership_for_member(
     # Lookup member existence
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
 
     # Create and persist the Membership
     membership = Membership(
@@ -44,7 +49,7 @@ def create_membership_for_member(
     db.refresh(membership)
 
     return JSONResponse(
-        status_code=201,
+        status_code=status.HTTP_201_CREATED,
         content={
             "message": f"Membership for year {membership.year} created for member ID {member_id}.",
             "membership": MembershipResponse.model_validate(membership).model_dump(),
@@ -66,7 +71,9 @@ def update_membership_for_year(
         .first()
     )
     if not m:
-        raise HTTPException(status_code=404, detail="Membership not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Membership not found"
+        )
 
     m.amount = patch.amount  # triggers @validates('amount') to recompute flags
     db.commit()
@@ -85,7 +92,9 @@ def delete_membership_for_year(
         .first()
     )
     if not m:
-        raise HTTPException(status_code=404, detail="Membership not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Membership not found"
+        )
 
     db.delete(m)
     db.commit()

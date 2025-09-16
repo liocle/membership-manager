@@ -20,6 +20,9 @@ from sqlalchemy import or_
 router = APIRouter(prefix="/members", tags=["members"])
 
 
+# TODO Change all HTTP responses to use status codes
+
+
 @router.get("/search/{reference_number}")
 def get_member_by_reference(reference_number: int, db: Session = Depends(get_db)):
     """
@@ -39,10 +42,12 @@ def get_member_by_reference(reference_number: int, db: Session = Depends(get_db)
         db.query(Member).filter(Member.reference_number == reference_number).first()
     )
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
     memberships = db.query(Membership).filter(Membership.member_id == member.id).all()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Member {reference_number} and their memberships fetched successfully.",
             "member": {
@@ -82,7 +87,7 @@ def search_by_full_name(name: str, db: Session = Depends(get_db)):
     """
     members = db.query(Member).filter(Member.full_name.ilike(f"%{name}%")).all()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Found {len(members)} member(s) matching full name '{name}'.",
             "results": [MemberResponse.model_validate(m).model_dump() for m in members],
@@ -110,7 +115,7 @@ def search_by_name(name: str, db: Session = Depends(get_db)):
         .all()
     )
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Found {len(members)} member(s) matching name '{name}'.",
             "results": [MemberResponse.model_validate(m).model_dump() for m in members],
@@ -131,7 +136,7 @@ def search_by_city(city: str, db: Session = Depends(get_db)):
     """
     members = db.query(Member).filter(Member.city.ilike(f"%{city}%")).all()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Found {len(members)} member(s) in city '{city}'.",
             "results": [MemberResponse.model_validate(m).model_dump() for m in members],
@@ -152,7 +157,7 @@ def search_by_postal(postal_code: str, db: Session = Depends(get_db)):
     """
     members = db.query(Member).filter(Member.postal_code == postal_code).all()
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Found {len(members)} member(s) with postal code {postal_code}.",
             "results": [MemberResponse.model_validate(m).model_dump() for m in members],
@@ -216,7 +221,7 @@ def create_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     db.refresh(member)
 
     return JSONResponse(
-        status_code=201,
+        status_code=statsus.HTTP_201_CREATED,
         content={
             "message": "Member created successfully.",
             "member": MemberResponse.model_validate(member).model_dump(),
@@ -239,7 +244,9 @@ def update_member(id: int, updates: MemberUpdate, db: Session = Depends(get_db))
     """
     member = db.query(Member).filter(Member.id == id).first()
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
 
     for key, value in updates.model_dump(exclude_unset=True).items():
         setattr(member, key, value)
@@ -248,7 +255,7 @@ def update_member(id: int, updates: MemberUpdate, db: Session = Depends(get_db))
     db.refresh(member)
 
     return JSONResponse(
-        status_code=200,
+        status_code=status.HTTP_200_OK,
         content={
             "message": f"Member {member.id} updated successfully.",
             "member": MemberResponse.model_validate(member).model_dump(),
@@ -284,7 +291,7 @@ def register_new_member(member_in: MemberCreate, db: Session = Depends(get_db)):
 
     db.refresh(member)
     return JSONResponse(
-        status_code=201,
+        status_code=status.HTTP_201_CREATED,
         content={
             "message": "Member created successfully.",
             "member": MemberResponse.model_validate(member).model_dump(),
@@ -292,7 +299,7 @@ def register_new_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     )
 
 
-@router.delete("/{member_id}", status_code=200)
+@router.delete("/{member_id}", status_code=status.HTTP_200_OK)
 def delete_member(member_id: int, db: Session = Depends(get_db)) -> dict:
     """
     Delete a member by ID and return a confirmation message.
@@ -309,7 +316,9 @@ def delete_member(member_id: int, db: Session = Depends(get_db)) -> dict:
     """
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
 
     db.delete(member)
     db.commit()
@@ -331,17 +340,24 @@ def generate_letter(member_id: int, db: Session = Depends(get_db)):
     """
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
 
     if not member.memberships:
-        raise HTTPException(status_code=400, detail="Member has no memberships")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Member has no memberships"
+        )
 
     membership = sorted(member.memberships, key=lambda m: m.year, reverse=True)[0]
 
     try:
         filepath = generate_pdf(member, membership, output_dir=Path("output/letters"))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"PDF generation failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"PDF generation failed: {e}",
+        )
 
     return {"message": "PDF generated successfully", "path": str(filepath)}
 
@@ -388,7 +404,9 @@ def generate_welcome_letter(member_id: int, db: Session = Depends(get_db)):
     """
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
+        )
 
     current_year = datetime.now().year
     membership = (
@@ -410,6 +428,9 @@ def generate_welcome_letter(member_id: int, db: Session = Depends(get_db)):
     try:
         filepath = generate_pdf(member, membership, output_dir=Path("output/letters"))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"PDF generation failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"PDF generation failed: {e}",
+        )
 
     return {"message": "PDF generated successfully", "path": str(filepath)}
