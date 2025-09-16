@@ -197,3 +197,10 @@ notes.md
 # Ignore csv files
 *.csv
 
+
+# Ignore all obs_ai_gateway realted files until further notice
+obs_ai_gateway/**
+benchmark_ollama.sh
+.env.obsai
+
+
