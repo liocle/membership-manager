@@ -185,7 +185,7 @@ membership-manager/
 
 ## 📄 Sample Welcome Letter
 
-<img width="1241" height="1754" alt="sample-letter-1" src="https://github.com/user-attachments/assets/148395f8-22cd-4208-b068-5a8968426a25" />
+<img width="2100" height="" alt="sample-letter-1" src="https://github.com/user-attachments/assets/148395f8-22cd-4208-b068-5a8968426a25" />
 
 ---
 
