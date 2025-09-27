@@ -1,12 +1,16 @@
 {
-  "include": ["app", "tests"],
+  "typeCheckingMode": "basic",
   "venvPath": ".",
   "venv": "venv",
+
+  // Let pyright analyze the whole repo
+  "include": ["."],
+
+  // Tell pyright where to look for imports
   "executionEnvironments": [
     {
       "root": ".",
-      "extraPaths": ["./app"]
+      "extraPaths": ["./", "./app"]
     }
   ]
 }
-
