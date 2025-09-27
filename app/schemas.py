@@ -1,28 +1,46 @@
 # app/schemas.py
 
 from datetime import datetime
+from decimal import Decimal
 from typing import Annotated, List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_serializer
 
 
 class MembershipResponse(BaseModel):
-    year: int
-    amount: int
+    year: Optional[int] = Field(default_factory=lambda: datetime.now().year)
+    amount: Annotated[Decimal, Field(ge=0, max_digits=10, decimal_places=2)] = Decimal(
+        "0.00"
+    )
     is_paid: bool
     discounted: bool
+
+    @field_serializer("amount")
+    def _ser_amount(self, v: Decimal) -> float:
+        return float(v)
 
     model_config = {
         "from_attributes": True,
         "json_schema_extra": {
             "example": {
                 "year": 2024,
-                "amount": 25,
+                "amount": 25.00,
                 "is_paid": True,
                 "discounted": False,
             }
         },
     }
+
+
+class MembershipCreate(BaseModel):
+    year: Optional[int] = Field(default_factory=lambda: datetime.now().year)
+    amount: int = Field(
+        default=0, ge=0, description="Membership amount in euros (default: 0 = unpaid)"
+    )
+
+    @field_serializer("amount")
+    def _ser_amount(self, v: Decimal) -> float:
+        return float(v)
 
 
 class MemberBase(BaseModel):
@@ -94,7 +112,12 @@ class MemberResponse(MemberBase):
                 "reference_number": 2000000003,
                 "no_postal_mail": False,
                 "memberships": [
-                    {"year": 2024, "amount": 25, "is_paid": True, "discounted": False}
+                    {
+                        "year": 2024,
+                        "amount": 25.00,
+                        "is_paid": True,
+                        "discounted": False,
+                    }
                 ],
             }
         },
@@ -106,8 +129,6 @@ class MemberWithMessage(BaseModel):
     member: MemberResponse
 
 
-class MembershipCreate(BaseModel):
-    year: Optional[int] = Field(default_factory=lambda: datetime.now().year)
-    amount: int = Field(
-        default=0, ge=0, description="Membership amount in euros (default: 0 = unpaid)"
-    )
+class MemberSearchResponse(BaseModel):
+    total: int
+    results: List[MemberResponse]
