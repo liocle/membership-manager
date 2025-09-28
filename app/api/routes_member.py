@@ -6,16 +6,22 @@ Routes for member-related search and query operations.
 
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from models import Member, Membership
 from pdf.generate_welcome_letter import generate_pdf
-from schemas import MemberCreate, MemberResponse, MemberUpdate, MemberWithMessage
-from sqlalchemy.orm import Session
-from typing import Optional
+from schemas import (
+    MemberCreate,
+    MemberResponse,
+    MemberUpdate,
+    MemberWithMessage,
+    MemberListResponse,
+)
 from sqlalchemy import or_
+from sqlalchemy.orm import Session, joinedload
 
 router = APIRouter(prefix="/members", tags=["members"])
 
@@ -23,7 +29,11 @@ router = APIRouter(prefix="/members", tags=["members"])
 # TODO Change all HTTP responses to use status codes
 
 
-@router.get("/search/{reference_number}")
+@router.get(
+    "/search/{reference_number}",
+    response_model=MemberWithMessage,
+    status_code=status.HTTP_200_OK,
+)
 def get_member_by_reference(reference_number: int, db: Session = Depends(get_db)):
     """
     Fetch a member and their memberships by reference number.
@@ -39,38 +49,19 @@ def get_member_by_reference(reference_number: int, db: Session = Depends(get_db)
         HTTPException: If no member is found.
     """
     member = (
-        db.query(Member).filter(Member.reference_number == reference_number).first()
+        db.query(Member)
+        .options(joinedload(Member.memberships))
+        .filter(Member.reference_number == reference_number)
+        .first()
     )
     if not member:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
         )
     memberships = db.query(Membership).filter(Membership.member_id == member.id).all()
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "message": f"Member {reference_number} and their memberships fetched successfully.",
-            "member": {
-                "id": member.id,
-                "first_name": member.first_name,
-                "last_name": member.last_name,
-                "email": member.email,
-                "city": member.city,
-                "postal_code": member.postal_code,
-                "notes": member.notes,
-                "reference_number": member.reference_number,
-                "no_postal_mail": member.no_postal_mail,
-                "memberships": [
-                    {
-                        "year": m.year,
-                        "amount": m.amount,
-                        "is_paid": m.is_paid,
-                        "discounted": m.discounted,
-                    }
-                    for m in memberships
-                ],
-            },
-        },
+    return MemberWithMessage(
+        message=f"Member {reference_number} and their memberships fetched successfully.",
+        member=member,
     )
 
 
@@ -191,19 +182,22 @@ def search_by_reference(
     #         detail="Reference number must be an integer",
     #     )
     member = (
-        db.query(Member).filter(Member.reference_number == reference_number).first()
+        db.query(Member)
+        .options(joinedload(Member.memberships))
+        .filter(Member.reference_number == reference_number)
+        .first()
     )
     if not member:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Member not found"
         )
-    return {
-        "message": f"Member with reference number {reference_number} found.",
-        "member": member,
-    }
+    return MemberWithMessage(
+        message=f"Member with reference number {reference_number} found.",
+        member=MemberResponse.model_validate(member),
+    )
 
 
-@router.post("/", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=MemberWithMessage, status_code=status.HTTP_201_CREATED)
 def create_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     """
     Create a new member (admin-initiated, no membership auto-created).
@@ -220,12 +214,9 @@ def create_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(member)
 
-    return JSONResponse(
-        status_code=statsus.HTTP_201_CREATED,
-        content={
-            "message": "Member created successfully.",
-            "member": MemberResponse.model_validate(member).model_dump(),
-        },
+    return MemberWithMessage(
+        message=f"Member {member.first_name} {member.last_name} created.",
+        member=member,
     )
 
 
@@ -264,7 +255,7 @@ def update_member(id: int, updates: MemberUpdate, db: Session = Depends(get_db))
 
 
 @router.post(
-    "/new_member", response_model=MemberResponse, status_code=status.HTTP_201_CREATED
+    "/new_member", response_model=MemberWithMessage, status_code=status.HTTP_201_CREATED
 )
 def register_new_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     """
@@ -290,12 +281,9 @@ def register_new_member(member_in: MemberCreate, db: Session = Depends(get_db)):
     db.commit()
 
     db.refresh(member)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content={
-            "message": "Member created successfully.",
-            "member": MemberResponse.model_validate(member).model_dump(),
-        },
+    return MemberWithMessage(
+        message=f"Member {member.first_name} {member.last_name} created.",
+        member=member,
     )
 
 
@@ -362,7 +350,7 @@ def generate_letter(member_id: int, db: Session = Depends(get_db)):
     return {"message": "PDF generated successfully", "path": str(filepath)}
 
 
-@router.get("/", tags=["members"])
+@router.get("/", response_model=MemberListResponse, tags=["members"])
 def list_members(
     q: Optional[str] = None,
     city: Optional[str] = None,
@@ -389,10 +377,8 @@ def list_members(
     total = query.count()
     rows = query.order_by(Member.id.desc()).offset(offset).limit(limit).all()
 
-    items = [
-        MemberResponse.model_validate(m).model_dump() for m in rows
-    ]  # uses existing schema
-    return {"items": items, "total": total}
+    items = [MemberResponse.model_validate(m).model_dump() for m in rows]
+    return MemberListResponse(items=items, total=total)
 
 
 @router.post("/{member_id}/letters")
